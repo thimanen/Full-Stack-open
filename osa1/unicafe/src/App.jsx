@@ -27,6 +27,14 @@ const positives = (good, all) => {
   return good / all * 100
 }
 
+const StatisticLine = (props) => {
+  return (
+    <div>
+      {props.text} {props.value} 
+    </div>
+  )
+}
+
 const Statistics = (props) => {
   console.log(props)
   const good = props.good
@@ -44,12 +52,12 @@ const Statistics = (props) => {
   
   return (
     <div>
-      good {good}<br />
-      neutral {neutral}<br />
-      bad {bad}<br />
-      all {all}<br />
-      average {average(good, neutral, bad, all)}<br />
-      positive {positives(good, all)} %
+      <StatisticLine text="good" value={good} />
+      <StatisticLine text="neutral" value={neutral} />
+      <StatisticLine text="bad" value={bad} />
+      <StatisticLine text="all" value={all} />
+      <StatisticLine text="average" value={average(good, neutral, bad, all)} />
+      <StatisticLine text="positive" value={positives(good, all) + " %"} />
     </div>
   )
 }
