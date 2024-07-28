@@ -34,15 +34,23 @@ const Statistics = (props) => {
   const bad = props.bad
   const all = props.all
 
+  if (all === 0) {
+    return (
+      <div>
+        No feedback given
+      </div>
+    )
+  }
+  
   return (
-  <div>
-    good {good}<br />
-    neutral {neutral}<br />
-    bad {bad}<br />
-    all {all}<br />
-    average {average(good, neutral, bad, all)}<br />
-    positive {positives(good, all)} %
-  </div>
+    <div>
+      good {good}<br />
+      neutral {neutral}<br />
+      bad {bad}<br />
+      all {all}<br />
+      average {average(good, neutral, bad, all)}<br />
+      positive {positives(good, all)} %
+    </div>
   )
 }
 
