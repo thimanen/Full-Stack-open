@@ -27,6 +27,16 @@ const positives = (good, all) => {
   return good / all * 100
 }
 
+const Statistics = (props) => {
+  console.log(props)
+  return (
+  <div>
+    average {average(props.good, props.neutral, props.bad, props.all)}<br />
+    positive {positives(props.good, props.all)} %
+  </div>
+  )
+}
+
 const App = () => {
   // tallenna napit omaan tilaansa
   const [good, setGood] = useState(0)
@@ -60,12 +70,11 @@ const App = () => {
       <Button handleClick={handleBadClick} text='bad' />
       <Header header={'statistics'} />
 
-      good {good}<br></br>
-      neutral {neutral}<br></br>
-      bad {bad}<br></br>
-      all {all}<br></br>
-      average {average(good, neutral, bad, all)}<br></br>
-      positive {positives(good, all)} %
+      good {good}<br />
+      neutral {neutral}<br />
+      bad {bad}<br />
+      all {all}<br />
+      <Statistics good={good} neutral={neutral} bad={neutral} all={all} />
     </div>
   )
 }
