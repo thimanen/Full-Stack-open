@@ -29,10 +29,19 @@ const positives = (good, all) => {
 
 const Statistics = (props) => {
   console.log(props)
+  const good = props.good
+  const neutral = props.neutral
+  const bad = props.bad
+  const all = props.all
+
   return (
   <div>
-    average {average(props.good, props.neutral, props.bad, props.all)}<br />
-    positive {positives(props.good, props.all)} %
+    good {good}<br />
+    neutral {neutral}<br />
+    bad {bad}<br />
+    all {all}<br />
+    average {average(good, neutral, bad, all)}<br />
+    positive {positives(good, all)} %
   </div>
   )
 }
@@ -70,11 +79,7 @@ const App = () => {
       <Button handleClick={handleBadClick} text='bad' />
       <Header header={'statistics'} />
 
-      good {good}<br />
-      neutral {neutral}<br />
-      bad {bad}<br />
-      all {all}<br />
-      <Statistics good={good} neutral={neutral} bad={neutral} all={all} />
+      <Statistics good={good} neutral={neutral} bad={bad} all={all} />
     </div>
   )
 }
