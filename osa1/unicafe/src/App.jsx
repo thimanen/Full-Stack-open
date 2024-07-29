@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 const Header = (props) => {
-  console.log(props.header)
   return (
     <h1>
       {props.header}
@@ -10,7 +9,6 @@ const Header = (props) => {
 }
 
 const Button = (props) => {
-  console.log(props)
   const { handleClick, text } = props
   return (
     <button onClick={handleClick}>
@@ -29,14 +27,18 @@ const positives = (good, all) => {
 
 const StatisticLine = (props) => {
   return (
-    <div>
-      {props.text} {props.value} 
-    </div>
+    <tr>
+      <td>
+        {props.text} 
+      </td>
+      <td>
+        {props.value}
+      </td>
+    </tr>
   )
 }
 
 const Statistics = (props) => {
-  console.log(props)
   const good = props.good
   const neutral = props.neutral
   const bad = props.bad
@@ -52,12 +54,16 @@ const Statistics = (props) => {
   
   return (
     <div>
-      <StatisticLine text="good" value={good} />
-      <StatisticLine text="neutral" value={neutral} />
-      <StatisticLine text="bad" value={bad} />
-      <StatisticLine text="all" value={all} />
-      <StatisticLine text="average" value={average(good, neutral, bad, all)} />
-      <StatisticLine text="positive" value={positives(good, all) + " %"} />
+      <table>
+        <tbody>
+          <StatisticLine text="good" value={good} />
+          <StatisticLine text="neutral" value={neutral} />
+          <StatisticLine text="bad" value={bad} />
+          <StatisticLine text="all" value={all} />
+          <StatisticLine text="average" value={average(good, neutral, bad, all)} />
+          <StatisticLine text="positive" value={positives(good, all) + " %"} />
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -94,8 +100,9 @@ const App = () => {
       <Button handleClick={handleNeutralClick} text='Neutral' />
       <Button handleClick={handleBadClick} text='bad' />
       <Header header={'statistics'} />
-
+      
       <Statistics good={good} neutral={neutral} bad={bad} all={all} />
+  
     </div>
   )
 }
