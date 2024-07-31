@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-let originalVotes = new Uint16Array(8)
+let mostVotes = 0
 
 const App = () => {
   const anecdotes = [
@@ -27,15 +27,20 @@ const App = () => {
   const handleVoteClick = () => {
     const newVotes = [...votes]
     newVotes[selected] += 1
+    mostVotes = newVotes.indexOf(Math.max(...newVotes))
+    console.log('most votes for:', mostVotes)
     setVotes(newVotes)
   }
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {anecdotes[selected]}<br />
       has {votes[selected]} votes <br />
       <button onClick={handleVoteClick}>vote</button>
       <button onClick={handleNextAnecdoteClick}>next anecdote</button>
+      <h1>Anecdote with most votes</h1>
+      {anecdotes[mostVotes]}
     </div>
   )
 }
