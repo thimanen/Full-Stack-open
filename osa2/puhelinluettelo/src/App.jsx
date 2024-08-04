@@ -3,12 +3,14 @@ import Entry from './components/Entry'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: "040-1231244"
-     }
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [newNameFilter, setNewNameFilter] = useState('')
 
   const addEntry = (event) => {
     event.preventDefault()
@@ -35,9 +37,16 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const handleFilterChange = (event) => {
+    setNewNameFilter(event.target.value)
+    console.log(newNameFilter)
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
+      filter shown with <input value={newNameFilter} onChange={handleFilterChange} />
+      <h2>add a new</h2>
       <form onSubmit={addEntry}>
         <div>
           name: <input 
@@ -59,7 +68,7 @@ const App = () => {
       </div>
       <h2>Numbers</h2>
         <ul>
-          {persons.map(entry =>
+          {persons.filter(entry => entry.name.toLowerCase().includes(newNameFilter)).map(entry =>
             <Entry key={entry.name} entry={entry} />
           )}
         </ul>
