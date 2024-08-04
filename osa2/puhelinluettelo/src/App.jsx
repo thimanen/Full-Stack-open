@@ -3,15 +3,18 @@ import Entry from './components/Entry'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' },
-    { name: 'Hello Artas'}
+    { name: 'Arto Hellas',
+      number: "040-1231244"
+     }
   ]) 
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
 
   const addEntry = (event) => {
     event.preventDefault()
     const entryObject = {
-      name: newName
+      name: newName,
+      number: newNumber
     }
 
     if (persons.some(entry => entry.name === newName)) {
@@ -21,11 +24,15 @@ const App = () => {
     }
 
     setNewName('')
+    setNewNumber('')
   }
 
   const handleNameChange = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
+  }
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
   }
 
   return (
@@ -36,6 +43,12 @@ const App = () => {
           name: <input 
             value={newName}
             onChange={handleNameChange}
+          />
+        </div>
+        <div>
+          number: <input
+            value={newNumber}
+            onChange={handleNumberChange}
           />
         </div>
         <div>
