@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -11,11 +11,10 @@ const App = () => {
   const [newNameFilter, setNewNameFilter] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    console.log('effect hook activated')
+    personService
+      .getAll()
       .then(response => {
-        console.log('promise fulfilled')
         setPersons(response.data)
       })
   }, [])
@@ -30,8 +29,8 @@ const App = () => {
     if (persons.some(entry => entry.name === newName)) {
       alert(`${newName} is already added to phonebook`)
     } else {
-      axios
-        .post('http://localhost:3001/persons', entryObject)
+      personService
+        .createEntry(entryObject)
         .then(response => {
           setPersons(persons.concat(response.data))
         })
