@@ -1,6 +1,8 @@
-const Entry = ({entry}) => {
+const Entry = ({name, number, deleteEntry}) => {
     return (
-        <li>{entry.name} {entry.number}</li>
+        <li>
+            {name} {number} <button onClick={deleteEntry}>delete</button>
+        </li>
     )
 }
 

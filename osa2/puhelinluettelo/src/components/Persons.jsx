@@ -1,10 +1,14 @@
 import Entry from "./Entry"
 
-const Persons = (props) => {
+const Persons = ({persons, newNameFilter, deletePerson}) => {
     return(
         <ul>
-          {props.persons.filter(entry => entry.name.toLowerCase().includes(props.newNameFilter)).map(entry =>
-            <Entry key={entry.name} entry={entry} />
+          {persons.filter(entry => entry.name.toLowerCase().includes(newNameFilter)).map((entry) => 
+          {
+            return ( 
+              <Entry key={entry.name} name={entry.name} number={entry.number} 
+                deleteEntry={() => deletePerson(entry.id)} />)
+            }
           )}
         </ul>
     )

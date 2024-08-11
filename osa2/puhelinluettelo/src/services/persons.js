@@ -5,8 +5,12 @@ const getAll = () => {
     return axios.get(baseUrl)
 }
 
-const createEntry =(newEntry) => {
+const createEntry = (newEntry) => {
     return axios.post(baseUrl, newEntry)
 }
 
-export default { getAll, createEntry }
+const deleteEntry = (entryId) => {
+    return axios.delete(`${baseUrl}/${entryId}`)
+}
+
+export default { getAll, createEntry, deleteEntry }
