@@ -2,9 +2,7 @@ const Notification = ({ message, isSuccess }) => {
     if (message === null || isSuccess === null) {
         return null
     }
-
-console.log(`isSuccess == ${isSuccess}`)
-
+    
     if (isSuccess) {
         return (
             <div className="success">

@@ -23,6 +23,7 @@ const App = () => {
       })
   }, [])
   
+
   const addEntry = (event) => {
     event.preventDefault()
     const entryObject = {
@@ -38,9 +39,15 @@ const App = () => {
           .updateEntry(entryObject, existingEntry.id)
           .then(response => {
             setPersons(persons.map(entry => entry.name !== newName ? entry : response.data))
+            setNewNotification(`Modified number of ${newName}`)
+            setNotificationClass(true)
           })
-        setNewNotification(`Modified number of ${newName}`)
-        setNotificationClass(true)
+          .catch(error => {
+            setNewNotification(`Information on ${newName} has already been removed from server`)
+            setNotificationClass(false)
+          })
+        
+        
       }
     } else {
       personService
@@ -60,6 +67,7 @@ const App = () => {
     setNewName('')
     setNewNumber('')
   }
+
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)

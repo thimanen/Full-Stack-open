@@ -1,13 +1,8 @@
 {
   "persons": [
     {
-      "id": "c32a",
-      "name": "Antti Isotalo",
-      "number": "050 5656787"
-    },
-    {
       "name": "Joona Jokamies",
-      "number": "09876543",
+      "number": "040 523456",
       "id": "eb98"
     },
     {
