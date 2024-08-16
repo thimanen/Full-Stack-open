@@ -8,10 +8,6 @@ const App = () => {
   const [countries, setCountries] = useState([])
   const [nameFilter, setNameFilter] = useState('')
 
-  const handleFilterChange = (event) => {
-    setNameFilter(event.target.value)
-  }
-
   useEffect(() => {
     console.log('effect hook activated')
     countryService
@@ -24,8 +20,8 @@ const App = () => {
 
   return (
     <div>
-      <Filter filter={nameFilter} changeHandler={handleFilterChange} />
-      <Countries countries={countries} />
+      <Filter filter={nameFilter} setNameFilter={setNameFilter} />
+      <Countries countries={countries} nameFilter={nameFilter} />
     </div>
   )
 }
