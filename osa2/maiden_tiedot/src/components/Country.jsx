@@ -1,8 +1,9 @@
-const Country = ({country, allData}) => {
+const Country = ({country, allData, handleShowCountry}) => {
+
     if(allData === false) {
         return (
             <li>
-                {country.name.common}
+                {country.name.common} <button onClick={() => handleShowCountry(country)}>show</button>
             </li>)
     } else {
         return (
@@ -20,8 +21,8 @@ const Country = ({country, allData}) => {
                 </ul>
                 <h3>flag:</h3>
                 <img src={`${country.flags.png}`} />
-
             </div>
+            
         )
     }
 }

@@ -17,11 +17,10 @@ const App = () => {
     })
   }, [])
 
-
   return (
     <div>
       <Filter filter={nameFilter} setNameFilter={setNameFilter} />
-      <Countries countries={countries} nameFilter={nameFilter} />
+      <Countries countries={countries} nameFilter={nameFilter} setNameFilter={setNameFilter} />
     </div>
   )
 }
