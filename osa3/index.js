@@ -25,6 +25,13 @@ let persons = [
     }
   ]
   
+  app.get('/info', (request, response) => {
+    const numberOfEntries = persons.length
+    const timeStamp = new Date().toLocaleString()
+    const htmlString = `<p>Phonebook has info for ${numberOfEntries} people</p> ${timeStamp}`
+    response.send(htmlString)
+  })
+
   app.get('/api/persons', (request, response) => {
     response.json(persons)
   })
