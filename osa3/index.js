@@ -60,8 +60,26 @@ let persons = [
 
   app.post('/api/persons', (request, response) => {
     const person = request.body
+
+    if (!person.name) {
+      return response.status(400).json({
+        error: 'name can not be empty'
+      })
+    }
+
+    if (!person.number) {
+      return response.status(400).json({
+        error: 'number can not be empty'
+      })
+    }
+
+    if (persons.find(entry => entry.name === person.name)) {
+      return response.status(400).json({
+        error: 'name must be unique'
+      })
+    }
+
     person.id = generateId()
-    
     persons = persons.concat(person)
     response.json(person)
   })
