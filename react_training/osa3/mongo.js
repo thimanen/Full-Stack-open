@@ -8,11 +8,16 @@ if(process.argv.length<3) {
 const password = process.argv[2]
 
 const url = 
-`mongodb+srv://thimanen:${password}@fullstack-course.iaaje.mongodb.net/?
+`mongodb+srv://thimanen:${password}@fullstack-course.iaaje.mongodb.net/noteApp?
 retryWrites=true&w=majority&appName=FullStack-course`
 
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+    content: String,
+    important: Boolean,
+})
 
 const Note = mongoose.model('Note', noteSchema)
 
