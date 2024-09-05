@@ -12,31 +12,30 @@ const url =
 retryWrites=true&w=majority&appName=FullStack-course`
 
 mongoose.set('strictQuery', false)
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-    content: String,
-    important: Boolean,
-})
-
-const Note = mongoose.model('Note', noteSchema)
-
-/*
-const note = new Note({
-    content: 'Mongoose makes thing easy',
-    important: true,
-})
-
-note.save().then(result => {
-    console.log('note saved')
-    mongoose.connection.close()
-})
-*/
-
-Note.find({}).then(result => {
-    // console.log(result)
-    result.forEach(note => {
-        console.log(note)
+mongoose.connect(url).then(() => {
+    const noteSchema = new mongoose.Schema({
+      content: String,
+      important: Boolean,
     })
-    mongoose.connection.close()
+
+    const Note = mongoose.model('Note', noteSchema)
+
+
+    const note = new Note({
+        content: 'Mongoose makes thing easy',
+        important: true,
+    })
+
+    note.save().then(result => {
+     console.log('note saved')
+    m   ongoose.connection.close()
+    })
+
+    Note.find({}).then(result => {
+    // console.log(result)
+        result.forEach(note => {
+            console.log(note)
+        })
+        mongoose.connection.close()
+    })
 })
