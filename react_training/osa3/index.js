@@ -16,6 +16,8 @@ const noteSchema = new mongoose.Schema({
 })
 
 const Note = mongoose.model('Note', noteSchema)
+
+/*
 let notes = [
     {
       id: "1",
@@ -33,6 +35,7 @@ let notes = [
       important: true
     }
   ]
+  */
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -57,7 +60,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
-  response.json(notes)
+  Note.find({}).then(notes => {
+    response.json(notes)
+  })
 })
 
 app.get('/api/notes/:id', (request, response) => {
