@@ -1,21 +1,9 @@
 const express = require('express')
 const cors = require('cors')
-const mongoose = require('mongoose')
+
 const app = express()
+const Note = require('./models/note')
 
-const url = 
-`mongodb+srv://thimanen:${password}@fullstack-course.iaaje.mongodb.net/noteApp?
-retryWrites=true&w=majority&appName=FullStack-course`
-
-mongoose.set('strictQuery', false)
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-    content: String,
-    important: Boolean,
-})
-
-const Note = mongoose.model('Note', noteSchema)
 
 /*
 let notes = [
@@ -111,7 +99,7 @@ app.post('/api/notes', (request, response) => {
 
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
