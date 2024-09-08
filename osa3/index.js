@@ -78,34 +78,46 @@ let persons = [
     response.status(204).end()
   })
 
+  /*
   const generateId = () => {
     return String(Math.floor(Math.random() * 1000))
   }
+  */
 
   app.post('/api/persons', (request, response) => {
-    const person = request.body
+    const body = request.body
 
-    if (!person.name) {
+    if (!body.name) {
       return response.status(400).json({
         error: 'name can not be empty'
       })
     }
 
-    if (!person.number) {
+    if (!body.number) {
       return response.status(400).json({
         error: 'number can not be empty'
       })
     }
 
+    /*
     if (persons.find(entry => entry.name === person.name)) {
       return response.status(400).json({
         error: 'name must be unique'
       })
     }
+    */
 
-    person.id = generateId()
-    persons = persons.concat(person)
-    response.json(person)
+    /* person.id = generateId() */
+
+    const person = new Person({
+      name: body.name,
+      number: body.number
+    })
+    
+    person.save()
+      .then((newPerson) => {
+        response.json(newPerson)
+      })
   })
 
   const PORT = process.env.PORT
