@@ -16,6 +16,7 @@ morgan.token('body', getBody = (request, response) => {
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 const Person = require('./models/person')
+const { connection } = require('mongoose')
 
 /*
 let persons = [
@@ -113,7 +114,7 @@ let persons = [
       name: body.name,
       number: body.number
     })
-    
+
     person.save()
       .then((newPerson) => {
         response.json(newPerson)
