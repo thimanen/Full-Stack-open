@@ -8,8 +8,8 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(cors())
 
-morgan.token('body', getBody = (request, response) => {
-  if (request.method === 'POST') 
+morgan.token('body', (request, response) => {
+  if (request.method === 'POST')
     return (JSON.stringify(request.body))
 })
 
@@ -17,7 +17,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 
 const Person = require('./models/person')
 const { connection } = require('mongoose')
-  
+
 app.get('/info', (request, response, next) => {
   Person.countDocuments({})
     .then(count => {
@@ -26,7 +26,7 @@ app.get('/info', (request, response, next) => {
       const htmlString = `<p>Phonebook has info for ${numberOfEntries} people</p> ${timeStamp}`
       response.send(htmlString)
     })
-    .catch(error => next(error))    
+    .catch(error => next(error))
 })
 
 app.get('/api/persons', (request, response, next) => {
@@ -55,7 +55,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
       if(result) {
         response.status(204).end()
       } else {
-        response.status(404).send({error: 'unknown id'})
+        response.status(404).send({ error: 'unknown id' })
       }
     })
     .catch(error => next(error))
@@ -83,7 +83,7 @@ app.put('/api/persons/:id', (request, response, next) => {
     number: body.number,
   }
 
-  Person.findByIdAndUpdate(request.params.id, person, {new: true, runValidators: true, context: 'query'})
+  Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
@@ -101,7 +101,7 @@ const errorHandler = (error, request, response, next) => {
 
   /* same error for all validation errors */
   if (error.name === 'ValidationError') {
-    return response.status(400).json({error: error.message})
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
@@ -109,7 +109,7 @@ const errorHandler = (error, request, response, next) => {
 
 app.use(errorHandler)
 
-  const PORT = process.env.PORT
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-  })
+const PORT = process.env.PORT
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
