@@ -8,7 +8,7 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(cors())
 
-morgan.token('body', (request, response) => {
+morgan.token('body', (request) => {
   if (request.method === 'POST')
     return (JSON.stringify(request.body))
 })
@@ -16,7 +16,7 @@ morgan.token('body', (request, response) => {
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 const Person = require('./models/person')
-const { connection } = require('mongoose')
+/*const { connection } = require('mongoose')*/
 
 app.get('/info', (request, response, next) => {
   Person.countDocuments({})
