@@ -54,9 +54,13 @@ const App = () => {
         .createEntry(entryObject)
         .then(response => {
           setPersons(persons.concat(response.data))
+          setNewNotification(`Added ${newName}`)
+          setNotificationClass(true)
         })
-      setNewNotification(`Added ${newName}`)
-      setNotificationClass(true)
+        .catch(error => {
+          setNewNotification(`${error.response.data.error}`)
+          setNotificationClass(false)
+        })
     }
 
     setTimeout(() => {
