@@ -18,29 +18,36 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 const Person = require('./models/person')
 const { connection } = require('mongoose')
   
-  app.get('/info', (request, response) => {
-    const numberOfEntries = persons.length
-    const timeStamp = new Date().toLocaleString()
-    const htmlString = `<p>Phonebook has info for ${numberOfEntries} people</p> ${timeStamp}`
-    response.send(htmlString)
-  })
-
-app.get('/api/persons', (request, response) => {
-  Person.find({}).then(persons => {
-    response.json(persons)
-  })
+app.get('/info', (request, response, next) => {
+  Person.countDocuments({})
+    .then(count => {
+      const numberOfEntries = count
+      const timeStamp = new Date().toLocaleString()
+      const htmlString = `<p>Phonebook has info for ${numberOfEntries} people</p> ${timeStamp}`
+      response.send(htmlString)
+    })
+    .catch(error => next(error))    
 })
 
-  app.get('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(person => person.id === id)
+app.get('/api/persons', (request, response, next) => {
+  Person.find({})
+    .then(persons => {
+      response.json(persons)
+    })
+    .catch(error => next(error))
+})
 
-    if(person) {
-      response.json(person)
-    } else {
-      response.status(404).end()
-    }
-  })
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if(person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
+})
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
@@ -68,16 +75,6 @@ app.post('/api/persons', (request, response, next) => {
       error: 'number can not be empty'
     })
   }
-
-    /*
-    if (persons.find(entry => entry.name === person.name)) {
-      return response.status(400).json({
-        error: 'name must be unique'
-      })
-    }
-    */
-
-    /* person.id = generateId() */
 
   const person = new Person({
     name: body.name,
