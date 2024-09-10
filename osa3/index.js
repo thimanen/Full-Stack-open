@@ -17,36 +17,6 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 
 const Person = require('./models/person')
 const { connection } = require('mongoose')
-
-/*
-let persons = [
-    {
-        id: "1",
-        name: "Arto Hellas",
-        number: "040-123456"
-    },
-    {
-        id: "2",
-        name: "Ada Lovelace",
-        number: "39-44-5323523"
-    },
-    {
-        id: "3",
-        name: "Dan Abramov",
-        number: "12-43-234345"
-    },
-    {
-        id: "4",
-        name: "Mary poppendieck",
-        number: "39-23-6423122" 
-    },
-    {
-      id: "5",
-      name: "Teemu Teekkari",
-      number: "12-34-56-78-90" 
-    }
-  ]
-  */
   
   app.get('/info', (request, response) => {
     const numberOfEntries = persons.length
@@ -55,11 +25,11 @@ let persons = [
     response.send(htmlString)
   })
 
-  app.get('/api/persons', (request, response) => {
-    Person.find({}).then(persons => {
-      response.json(persons)
-    })
+app.get('/api/persons', (request, response) => {
+  Person.find({}).then(persons => {
+    response.json(persons)
   })
+})
 
   app.get('/api/persons/:id', (request, response) => {
     const id = request.params.id
@@ -72,33 +42,33 @@ let persons = [
     }
   })
 
-  app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    persons = persons.filter(person => person.id !== id)
+app.delete('/api/persons/:id', (request, response) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => {
+      console.log('error in DELETE')
+      response.status(400).send({error: 'delete did not work'})
+    })
+})
 
-    response.status(204).end()
-  })
+  
 
-  /*
-  const generateId = () => {
-    return String(Math.floor(Math.random() * 1000))
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+
+  if (!body.name) {
+    return response.status(400).json({
+      error: 'name can not be empty'
+    })
   }
-  */
 
-  app.post('/api/persons', (request, response) => {
-    const body = request.body
-
-    if (!body.name) {
-      return response.status(400).json({
-        error: 'name can not be empty'
-      })
-    }
-
-    if (!body.number) {
-      return response.status(400).json({
-        error: 'number can not be empty'
-      })
-    }
+  if (!body.number) {
+    return response.status(400).json({
+      error: 'number can not be empty'
+    })
+  }
 
     /*
     if (persons.find(entry => entry.name === person.name)) {
@@ -110,16 +80,16 @@ let persons = [
 
     /* person.id = generateId() */
 
-    const person = new Person({
-      name: body.name,
-      number: body.number
-    })
-
-    person.save()
-      .then((newPerson) => {
-        response.json(newPerson)
-      })
+  const person = new Person({
+    name: body.name,
+    number: body.number
   })
+
+  person.save()
+    .then((newPerson) => {
+      response.json(newPerson)
+    })
+})
 
   const PORT = process.env.PORT
   app.listen(PORT, () => {
