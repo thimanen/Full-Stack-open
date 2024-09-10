@@ -43,7 +43,8 @@ const App = () => {
             setNotificationClass(true)
           })
           .catch(error => {
-            setNewNotification(`Information on ${newName} has already been removed from server`)
+            /*setNewNotification(`Information on ${newName} has already been removed from server`)*/
+            setNewNotification(`${error.response.data.error}`)
             setNotificationClass(false)
           })
         

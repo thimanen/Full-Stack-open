@@ -18,9 +18,16 @@ const personSchema = new mongoose.Schema({
     name: {
         type: String,
         minlength: 3,
-        required: true
+        required: [true, "name field is mandatory"]
     },
-    number: String
+    number: {
+        type: String,
+        minlength: 8,
+        required: [true, "number field is mandatory"],
+        validate: (nbr) => {
+            return /\d{2,3}-\d{5,6}/.test(nbr)
+        }
+    }
 })
 
 personSchema.set('toJSON', {
