@@ -23,12 +23,6 @@ console.log(`Connected to mongoDB: ${process.env.MONGODB_URI}`)
 app.use(cors())
 app.use(express.json())
 
-/* Route for root to test the server*/
-app.get('/', (request, response) => {
-    response.send('<h1>Hello world</h1>')
-})
-
-
 app.get('/api/blogs', (request, response) => {
   Blog
     .find({})
