@@ -2,8 +2,8 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "title" : "First Artificial Enzyme From Two Non-Biological Groups Created",
-    "author" : "sb admin",
-    "url" : "https://scienceblogs.com/sb-admin/2020/02/10/first-artificial-enzyme-two-non-biological-groups-created-151440",
+    "title" : "I Am a Quantumist: Bring it On!",
+    "author" : "pontiff",
+    "url" : "https://scienceblogs.com/pontiff/2007/11/14/i-am-a-quantumist-bring-it-on",
     "likes" : 0
 }
