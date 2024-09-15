@@ -36,7 +36,16 @@ const mostBlogs = (blogs) => {
 }
 
 const mostLikes = (blogs) => {
-  
+
+  const aggregate = _.values(_.reduce(blogs, (result, obj) => {
+    result[obj.author] = {
+      author: obj.author,
+      likes: obj.likes + (result[obj.author] ? result[obj.author].likes : 0)
+    }
+    return result
+  }, {}))
+
+  return _.maxBy(aggregate, (author) => author.likes)
 }
 
 module.exports = {
