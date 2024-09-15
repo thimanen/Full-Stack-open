@@ -32,7 +32,11 @@ const mostBlogs = (blogs) => {
   let author = _.maxBy(Object.keys(freq))
   let numOfBlogs = freq[author]
 
-  return {author: author, blogs: numOfBlogs}
+  return { author: author, blogs: numOfBlogs }
+}
+
+const mostLikes = (blogs) => {
+  
 }
 
 module.exports = {
@@ -40,5 +44,6 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 }
 

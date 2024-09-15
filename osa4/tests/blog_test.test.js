@@ -90,7 +90,6 @@ describe('total likes', () => {
 })
 
 describe('favourite blog', () => {
-
   test('has the most likes', () => {
     const result = listHelper.favoriteBlog(listWithSeveralBlogs)
     assert.strictEqual(result, 'Canonical string reduction')
@@ -98,9 +97,17 @@ describe('favourite blog', () => {
 })
 
 describe('most blogs', () => {
-
   test('has writer who is most productive', () => {
     const result = listHelper.mostBlogs(listWithSeveralBlogs)
     assert.deepStrictEqual(result, { author: 'Robert C. Martin', blogs: 3 })
   })
 })
+
+describe('most likes', () => {
+  test('has the author who gets most votes', () => {
+    const result = listHelper.mostLikes(listWithSeveralBlogs)
+    assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 17 })
+  })
+})
+
+
