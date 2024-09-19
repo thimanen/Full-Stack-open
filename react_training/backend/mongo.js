@@ -22,7 +22,7 @@ mongoose.connect(url).then(() => {
 
 
   const note = new Note({
-    content: 'Mongoose makes thing easy',
+    content: 'CCS is hard',
     important: true,
   })
 
