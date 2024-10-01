@@ -1,6 +1,13 @@
-const { test, describe } = require('node:test')
+const { test, describe, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
+const Blog = require('../models/blog')
+const mongoose = require('mongoose')
+const supertest = require('supertest')
+const app = require('../app')
+const api = supertest(app)
+
 const listHelper = require('../utils/list_helper')
+const { findLastKey } = require('lodash')
 
 const listWithOneBlog = [
   {
@@ -64,6 +71,11 @@ const listWithSeveralBlogs = [
   },
 ]
 
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  await Blog.insertMany(listWithSeveralBlogs)
+})
+
 test('dummy returns one', () => {
   const blogs = []
 
@@ -109,5 +121,62 @@ describe('most likes', () => {
     assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 17 })
   })
 })
+
+
+/* Tehtävät 4.8 - 4.12 */
+
+describe.only('4.8: blogilistan testit, step1', () => {
+  test.only('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test.only('right nuber of blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
+
+    assert.strictEqual(response.body.length, listWithSeveralBlogs.length)
+  })
+})
+
+describe.only('4.9: blogilistan testit, step2', () => {
+  test.only('blog identifier is \'id\'', async () => {
+    const response = await api.get('/api/blogs')
+    let idInAll = true
+    response.body.forEach((blog) => {
+      if (!('id' in blog)) idInAll = false
+    })
+    assert.strictEqual(idInAll, true)
+  })
+})
+
+describe.only('4.10: blogilistan testit, step3', () => {
+  test.only('a blog can be added', async () => {
+    const newBlog = {
+      title: 'Jobs That Make a Lot of Money (17 high-paying careers in 2024)',
+      author: 'Ramit Sethi',
+      url: 'https://www.iwillteachyoutoberich.com/jobs-that-make-a-lot-of-money/',
+      likes: 1
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const titles = response.body.map(blog => blog.title)
+
+    assert.strictEqual(response.body.length, listWithSeveralBlogs.length + 1)
+    assert(titles.includes('Jobs That Make a Lot of Money (17 high-paying careers in 2024)'))
+  })
+})
+
+after(async () => {
+  await mongoose.connection.close()
+})
+
 
 
