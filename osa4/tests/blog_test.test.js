@@ -174,6 +174,29 @@ describe.only('4.10: blogilistan testit, step3', () => {
   })
 })
 
+describe.only('4.11: blogilistan testit, step4', () => {
+  test.only('missing \'likes\' results in 0', async () => {
+
+    /* new blog without the 'likes' field */
+    const newBlog = {
+      title: 'Jobs That Make a Lot of Money (17 high-paying careers in 2024)',
+      author: 'Ramit Sethi',
+      url: 'https://www.iwillteachyoutoberich.com/jobs-that-make-a-lot-of-money/'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const responseBlog = response.body.filter((blog) => blog.title === newBlog.title)
+    assert('likes' in responseBlog[0])
+    assert.strictEqual(responseBlog[0].likes, 0)
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
