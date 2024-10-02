@@ -177,11 +177,12 @@ describe.only('4.10: blogilistan testit, step3', () => {
 describe.only('4.11: blogilistan testit, step4', () => {
   test.only('missing \'likes\' results in 0', async () => {
 
-    /* new blog without the 'likes' field */
+    /* new blog without value in the 'likes' field */
     const newBlog = {
       title: 'Jobs That Make a Lot of Money (17 high-paying careers in 2024)',
       author: 'Ramit Sethi',
-      url: 'https://www.iwillteachyoutoberich.com/jobs-that-make-a-lot-of-money/'
+      url: 'https://www.iwillteachyoutoberich.com/jobs-that-make-a-lot-of-money/',
+      likes: ''
     }
 
     await api
@@ -194,6 +195,43 @@ describe.only('4.11: blogilistan testit, step4', () => {
     const responseBlog = response.body.filter((blog) => blog.title === newBlog.title)
     assert('likes' in responseBlog[0])
     assert.strictEqual(responseBlog[0].likes, 0)
+  })
+})
+
+describe.only('blogs without title and/or url, return 400 Bad Request', () => {
+  test.only('missing title returns 400 Bad Request', async () => {
+    /* new blog without the 'title' field */
+    const newBlog = {
+      author: 'Ramit Sethi',
+      url: 'https://www.iwillteachyoutoberich.com/jobs-that-make-a-lot-of-money/',
+      likes: 0
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, listWithSeveralBlogs.length)
+
+  })
+
+  test.only('missing url returns 400 Bad Request', async () => {
+    /* new blog without the 'url' field */
+    const newBlog = {
+      title: 'Jobs That Make a Lot of Money (17 high-paying careers in 2024)',
+      author: 'Ramit Sethi',
+      likes: 0
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, listWithSeveralBlogs.length)
   })
 })
 
