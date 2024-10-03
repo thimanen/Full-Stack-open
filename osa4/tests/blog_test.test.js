@@ -198,7 +198,7 @@ describe.only('4.11: blogilistan testit, step4', () => {
   })
 })
 
-describe.only('blogs without title and/or url, return 400 Bad Request', () => {
+describe.only('4.12: blogilistan testit, step5', () => {
   test.only('missing title returns 400 Bad Request', async () => {
     /* new blog without the 'title' field */
     const newBlog = {
@@ -234,6 +234,25 @@ describe.only('blogs without title and/or url, return 400 Bad Request', () => {
     assert.strictEqual(response.body.length, listWithSeveralBlogs.length)
   })
 })
+
+describe.only('4.13: blogilistan laajennus, step1', () => {
+  test.only('removing succesfully a blog returns 204 No Content', async () => {
+    const allBlogsAtStart = await api.get('/api/blogs')
+    const blogToDelete = allBlogsAtStart.body[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const allBlogsAtEnd = await api.get('/api/blogs')
+    const titles = allBlogsAtEnd.body.map(blog => blog.title)
+
+    assert(!titles.includes(blogToDelete.title))
+    assert.strictEqual(allBlogsAtEnd.body.length, listWithSeveralBlogs.length - 1)
+
+  })
+})
+
 
 after(async () => {
   await mongoose.connection.close()
