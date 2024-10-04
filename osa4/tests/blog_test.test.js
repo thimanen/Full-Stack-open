@@ -253,6 +253,25 @@ describe.only('4.13: blogilistan laajennus, step1', () => {
   })
 })
 
+describe.only('4.14: blogilistan laajennus, step2', () => {
+  test.only('modify the \'likes\' value in blog', async () => {
+    const allBlogsAtStart = await api.get('/api/blogs')
+    const blogToModify = allBlogsAtStart.body[0]
+
+    blogToModify.likes += 1
+
+    await api
+      .put(`/api/blogs/${blogToModify.id}`)
+      .send(blogToModify)
+      .expect(201)
+
+    const allBlogs = await api.get('/api/blogs')
+    const modifiedBlog = allBlogs.body.filter((blog) => blog.id === blogToModify.id)
+
+    assert.strictEqual(modifiedBlog[0].likes, blogToModify.likes)
+  })
+})
+
 
 after(async () => {
   await mongoose.connection.close()
