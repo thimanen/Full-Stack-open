@@ -1,7 +1,9 @@
 const { test, describe, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
@@ -9,71 +11,9 @@ const api = supertest(app)
 const listHelper = require('../utils/list_helper')
 const { findLastKey } = require('lodash')
 
-const listWithOneBlog = [
-  {
-    _id: '5a422aa71b54a676234d17f8',
-    title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
-    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-    likes: 5,
-    __v: 0
-  }
-]
-
-const listWithSeveralBlogs = [
-  {
-    _id: '5a422a851b54a676234d17f7',
-    title: 'React patterns',
-    author: 'Michael Chan',
-    url: 'https://reactpatterns.com/',
-    likes: 7,
-    __v: 0
-  },
-  {
-    _id: '5a422aa71b54a676234d17f8',
-    title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
-    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-    likes: 5,
-    __v: 0
-  },
-  {
-    _id: '5a422b3a1b54a676234d17f9',
-    title: 'Canonical string reduction',
-    author: 'Edsger W. Dijkstra',
-    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
-    likes: 12,
-    __v: 0
-  },
-  {
-    _id: '5a422b891b54a676234d17fa',
-    title: 'First class tests',
-    author: 'Robert C. Martin',
-    url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
-    likes: 10,
-    __v: 0
-  },
-  {
-    _id: '5a422ba71b54a676234d17fb',
-    title: 'TDD harms architecture',
-    author: 'Robert C. Martin',
-    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
-    likes: 0,
-    __v: 0
-  },
-  {
-    _id: '5a422bc61b54a676234d17fc',
-    title: 'Type wars',
-    author: 'Robert C. Martin',
-    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-    likes: 2,
-    __v: 0
-  },
-]
-
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(listWithSeveralBlogs)
+  await Blog.insertMany(listHelper.listWithSeveralBlogs)
 })
 
 test('dummy returns one', () => {
@@ -91,33 +31,33 @@ describe('total likes', () => {
   })
 
   test('when list has only one blog equals the likes of that', () => {
-    const result = listHelper.totalLikes(listWithOneBlog)
+    const result = listHelper.totalLikes(listHelper.listWithOneBlog)
     assert.strictEqual(result, 5)
   })
 
   test('of a bigger list is calculated right', () => {
-    const result = listHelper.totalLikes(listWithSeveralBlogs)
+    const result = listHelper.totalLikes(listHelper.listWithSeveralBlogs)
     assert.strictEqual(result, 36)
   })
 })
 
 describe('favourite blog', () => {
   test('has the most likes', () => {
-    const result = listHelper.favoriteBlog(listWithSeveralBlogs)
+    const result = listHelper.favoriteBlog(listHelper.listWithSeveralBlogs)
     assert.strictEqual(result, 'Canonical string reduction')
   })
 })
 
 describe('most blogs', () => {
   test('has writer who is most productive', () => {
-    const result = listHelper.mostBlogs(listWithSeveralBlogs)
+    const result = listHelper.mostBlogs(listHelper.listWithSeveralBlogs)
     assert.deepStrictEqual(result, { author: 'Robert C. Martin', blogs: 3 })
   })
 })
 
 describe('most likes', () => {
   test('has the author who gets most votes', () => {
-    const result = listHelper.mostLikes(listWithSeveralBlogs)
+    const result = listHelper.mostLikes(listHelper.listWithSeveralBlogs)
     assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 17 })
   })
 })
@@ -136,7 +76,7 @@ describe.only('4.8: blogilistan testit, step1', () => {
   test.only('right nuber of blogs are returned', async () => {
     const response = await api.get('/api/blogs')
 
-    assert.strictEqual(response.body.length, listWithSeveralBlogs.length)
+    assert.strictEqual(response.body.length, listHelper.listWithSeveralBlogs.length)
   })
 })
 
@@ -169,7 +109,7 @@ describe.only('4.10: blogilistan testit, step3', () => {
     const response = await api.get('/api/blogs')
     const titles = response.body.map(blog => blog.title)
 
-    assert.strictEqual(response.body.length, listWithSeveralBlogs.length + 1)
+    assert.strictEqual(response.body.length, listHelper.listWithSeveralBlogs.length + 1)
     assert(titles.includes('Jobs That Make a Lot of Money (17 high-paying careers in 2024)'))
   })
 })
@@ -213,7 +153,7 @@ describe.only('4.12: blogilistan testit, step5', () => {
       .expect(400)
 
     const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, listWithSeveralBlogs.length)
+    assert.strictEqual(response.body.length, listHelper.listWithSeveralBlogs.length)
 
   })
 
@@ -231,7 +171,7 @@ describe.only('4.12: blogilistan testit, step5', () => {
       .expect(400)
 
     const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, listWithSeveralBlogs.length)
+    assert.strictEqual(response.body.length, listHelper.listWithSeveralBlogs.length)
   })
 })
 
@@ -248,7 +188,7 @@ describe.only('4.13: blogilistan laajennus, step1', () => {
     const titles = allBlogsAtEnd.body.map(blog => blog.title)
 
     assert(!titles.includes(blogToDelete.title))
-    assert.strictEqual(allBlogsAtEnd.body.length, listWithSeveralBlogs.length - 1)
+    assert.strictEqual(allBlogsAtEnd.body.length, listHelper.listWithSeveralBlogs.length - 1)
 
   })
 })
@@ -270,6 +210,43 @@ describe.only('4.14: blogilistan laajennus, step2', () => {
 
     assert.strictEqual(modifiedBlog[0].likes, blogToModify.likes)
   })
+})
+
+describe.only('4.15: blogilistan laajennus, step3:', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({
+      username: 'root',
+      name: 'superuser',
+      passwordHash
+    })
+    await user.save()
+  })
+
+  test.only('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await listHelper.usersInDb()
+
+    const newUser = {
+      username: 'tteekkari',
+      name: 'Teemu Teekkari',
+      password: 'salasana',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-type', /application\/json/)
+
+    const usersAtEnd = await listHelper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    assert(usernames.includes(newUser.username))
+  })
+
 })
 
 
