@@ -248,6 +248,22 @@ describe.only('4.15: blogilistan laajennus, step3:', () => {
     assert(usernames.includes(newUser.username))
   })
 
+
+})
+describe.only('4.16: blogilistan laajennus, step4:', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({
+      username: 'root',
+      name: 'Superuser',
+      passwordHash
+    })
+
+    await user.save()
+  })
+
   test.only('creation fails with proper statuscode and message if username already taken', async () => {
     const usersAtStart = await listHelper.usersInDb()
 
