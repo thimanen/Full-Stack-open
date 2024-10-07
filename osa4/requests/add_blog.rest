@@ -2,8 +2,9 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "title" : "I Am a Quantumist: Bring it On!",
-    "author" : "pontiff",
-    "url" : "https://scienceblogs.com/pontiff/2007/11/14/i-am-a-quantumist-bring-it-on",
-    "likes" : 0
+    "title" : "React patterns",
+    "author" : "Michael Chan",
+    "url" : "https://reactpatterns.com/",
+    "likes" : 2,
+    "userId" : "6702e10f50286cdc8ff2c4c6"
 }

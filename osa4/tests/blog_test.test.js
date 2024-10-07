@@ -328,6 +328,32 @@ describe.only('4.16: blogilistan laajennus, step4:', () => {
 
 })
 
+describe.only('4.17: blogilistan laajennus, step4:', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    /* create two users */
+    let passwordHash = await bcrypt.hash('sekret', 10)
+    let user = new User({
+      username: 'root',
+      name: 'Superuser',
+      passwordHash
+    })
+
+    await user.save()
+
+    passwordHash = await bcrypt.hash('salasana', 10)
+    user = new User({
+      username: 'tteekkari',
+      name: 'Teemu Teekkari',
+      passwordHash
+    })
+
+    await user.save()
+  })
+  
+
+})
 
 after(async () => {
   await User.deleteMany({})
