@@ -103,7 +103,7 @@ describe.only('4.10: blogilistan testit, step3', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
-      .expect(201)
+      .expect(201) /* CREATED */
       .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
@@ -128,7 +128,7 @@ describe.only('4.11: blogilistan testit, step4', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
-      .expect(201)
+      .expect(201) /* CREATED */
       .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
@@ -150,7 +150,7 @@ describe.only('4.12: blogilistan testit, step5', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
-      .expect(400)
+      .expect(400) /* BAD REQUEST */
 
     const response = await api.get('/api/blogs')
     assert.strictEqual(response.body.length, listHelper.listWithSeveralBlogs.length)
@@ -168,7 +168,7 @@ describe.only('4.12: blogilistan testit, step5', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
-      .expect(400)
+      .expect(400) /* BAD REQUEST */
 
     const response = await api.get('/api/blogs')
     assert.strictEqual(response.body.length, listHelper.listWithSeveralBlogs.length)
@@ -182,7 +182,7 @@ describe.only('4.13: blogilistan laajennus, step1', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
-      .expect(204)
+      .expect(204) /* NO CONTENT */
 
     const allBlogsAtEnd = await api.get('/api/blogs')
     const titles = allBlogsAtEnd.body.map(blog => blog.title)
@@ -203,7 +203,7 @@ describe.only('4.14: blogilistan laajennus, step2', () => {
     await api
       .put(`/api/blogs/${blogToModify.id}`)
       .send(blogToModify)
-      .expect(201)
+      .expect(201) /* CREATED */
 
     const allBlogs = await api.get('/api/blogs')
     const modifiedBlog = allBlogs.body.filter((blog) => blog.id === blogToModify.id)
@@ -219,9 +219,10 @@ describe.only('4.15: blogilistan laajennus, step3:', () => {
     const passwordHash = await bcrypt.hash('sekret', 10)
     const user = new User({
       username: 'root',
-      name: 'superuser',
+      name: 'Superuser',
       passwordHash
     })
+
     await user.save()
   })
 
@@ -237,7 +238,7 @@ describe.only('4.15: blogilistan laajennus, step3:', () => {
     await api
       .post('/api/users')
       .send(newUser)
-      .expect(201)
+      .expect(201) /* CREATED */
       .expect('Content-type', /application\/json/)
 
     const usersAtEnd = await listHelper.usersInDb()
@@ -247,10 +248,73 @@ describe.only('4.15: blogilistan laajennus, step3:', () => {
     assert(usernames.includes(newUser.username))
   })
 
+  test.only('creation fails with proper statuscode and message if username already taken', async () => {
+    const usersAtStart = await listHelper.usersInDb()
+
+    const newUser = {
+      username: 'root',
+      name: 'Superuser',
+      password: 'salainen',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await listHelper.usersInDb()
+
+    assert(result.body.error.includes('expected `username` to be unique'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test.only('creation fails with proper statuscode and message if username is missing or invalid', async () => {
+    const usersAtStart = await listHelper.usersInDb()
+
+    const newUser = {
+      username: '',
+      name: 'Teemu Teekkari',
+      password: 'salasana',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400) /* BAD REQUEST */
+      .expect('Content-type', /application\/json/)
+
+    const usersAtEnd = await listHelper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+    assert(result.body.error.includes('User validation failed'))
+  })
+
+  test.only('creation fails with proper statuscode and message if password is missing or invalid', async () => {
+    const usersAtStart = await listHelper.usersInDb()
+
+    const newUser = {
+      username: 'tteekkari',
+      name: 'Teemu Teekkari',
+      password: '',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400) /* BAD REQUEST */
+      .expect('Content-type', /application\/json/)
+
+    const usersAtEnd = await listHelper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+    assert(result.body.error.includes('password missing or too short'))
+  })
+
 })
 
 
 after(async () => {
+  await User.deleteMany({})
   await mongoose.connection.close()
 })
 
