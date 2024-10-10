@@ -2,6 +2,7 @@ const blogsRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const middleware = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -9,7 +10,7 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const body = request.body
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if(!decodedToken.id) {
@@ -17,7 +18,14 @@ blogsRouter.post('/', async (request, response) => {
       .status(401) /* UNAUTHORIZED */
       .json({ error: 'token invalid' })
   }
-  const user = await User.findById(decodedToken.id)
+
+  const user = request.user
+  
+  if(!user._id) {
+    return response
+      .status(401) /* UNAUTHORIZED */
+      .json({ error: 'user invalid' })
+  }
 
   const blog = new Blog({
     title: body.title,
@@ -37,14 +45,20 @@ blogsRouter.post('/', async (request, response) => {
 
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if(!decodedToken.id) {
     return response
       .status(401) /* UNAUTHORIZED */
       .json({ error: 'token missing or invalid' })
   }
-  const userId = await User.findById(decodedToken.id)
+
+  const user = request.user
+  if(!user._id) {
+    return response
+      .status(401) /* UNAUTHORIZED */
+      .json({ error: 'user invalid' })
+  }
   const blog = await Blog.findById(request.params.id)
 
   if(blog === null) {
@@ -53,7 +67,7 @@ blogsRouter.delete('/:id', async (request, response) => {
       .json({ error: 'blog does not exist' })
   }
 
-  if(blog.user.toString() !== userId._id.toString()) {
+  if(blog.user.toString() !== user._id.toString()) {
     return response
       .status(401) /* UNAUTHORIZED */
       .json({ error: 'wrong user' })
