@@ -20,7 +20,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   }
 
   const user = request.user
-  
+
   if(!user._id) {
     return response
       .status(401) /* UNAUTHORIZED */

@@ -4,6 +4,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
@@ -92,6 +93,19 @@ describe.only('4.9: blogilistan testit, step2', () => {
 })
 
 describe.only('4.10: blogilistan testit, step3', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({
+      username: 'root',
+      name: 'Superuser',
+      passwordHash
+    })
+
+    await user.save()
+  })
+
   test.only('a blog can be added', async () => {
     const newBlog = {
       title: 'Jobs That Make a Lot of Money (17 high-paying careers in 2024)',
@@ -100,8 +114,19 @@ describe.only('4.10: blogilistan testit, step3', () => {
       likes: 1
     }
 
+    const user = await User.findOne({ username: 'root' })
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    }
+
+    const token = jwt.sign(userForToken, process.env.SECRET)
+    const authToken = `Bearer ${token}`
+
     await api
       .post('/api/blogs')
+      .set('Authorization', authToken)
       .send(newBlog)
       .expect(201) /* CREATED */
       .expect('Content-Type', /application\/json/)
@@ -115,6 +140,19 @@ describe.only('4.10: blogilistan testit, step3', () => {
 })
 
 describe.only('4.11: blogilistan testit, step4', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({
+      username: 'root',
+      name: 'Superuser',
+      passwordHash
+    })
+
+    await user.save()
+  })
+
   test.only('missing \'likes\' results in 0', async () => {
 
     /* new blog without value in the 'likes' field */
@@ -125,8 +163,19 @@ describe.only('4.11: blogilistan testit, step4', () => {
       likes: ''
     }
 
+    const user = await User.findOne({ username: 'root' })
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    }
+
+    const token = jwt.sign(userForToken, process.env.SECRET)
+    const authToken = `Bearer ${token}`
+
     await api
       .post('/api/blogs')
+      .set('Authorization', authToken)
       .send(newBlog)
       .expect(201) /* CREATED */
       .expect('Content-Type', /application\/json/)
@@ -139,6 +188,19 @@ describe.only('4.11: blogilistan testit, step4', () => {
 })
 
 describe.only('4.12: blogilistan testit, step5', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({
+      username: 'root',
+      name: 'Superuser',
+      passwordHash
+    })
+
+    await user.save()
+  })
+  
   test.only('missing title returns 400 Bad Request', async () => {
     /* new blog without the 'title' field */
     const newBlog = {
@@ -147,8 +209,19 @@ describe.only('4.12: blogilistan testit, step5', () => {
       likes: 0
     }
 
+    const user = await User.findOne({ username: 'root' })
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    }
+
+    const token = jwt.sign(userForToken, process.env.SECRET)
+    const authToken = `Bearer ${token}`
+
     await api
       .post('/api/blogs')
+      .set('Authorization', authToken)
       .send(newBlog)
       .expect(400) /* BAD REQUEST */
 
@@ -165,8 +238,19 @@ describe.only('4.12: blogilistan testit, step5', () => {
       likes: 0
     }
 
+    const user = await User.findOne({ username: 'root' })
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    }
+
+    const token = jwt.sign(userForToken, process.env.SECRET)
+    const authToken = `Bearer ${token}`
+
     await api
       .post('/api/blogs')
+      .set('Authorization', authToken)
       .send(newBlog)
       .expect(400) /* BAD REQUEST */
 
@@ -176,19 +260,50 @@ describe.only('4.12: blogilistan testit, step5', () => {
 })
 
 describe.only('4.13: blogilistan laajennus, step1', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(listHelper.listWithOneBlog)
+
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({
+      username: 'root',
+      name: 'Superuser',
+      passwordHash
+    })
+
+    await user.save()
+
+    const blog = await Blog.findOne({})
+    blog.user = user
+    await blog.save()
+  })
+
   test.only('removing succesfully a blog returns 204 No Content', async () => {
     const allBlogsAtStart = await api.get('/api/blogs')
     const blogToDelete = allBlogsAtStart.body[0]
 
+    const user = await User.findOne({ username: 'root' })
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    }
+
+    const token = jwt.sign(userForToken, process.env.SECRET)
+    const authToken = `Bearer ${token}`
+
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', authToken)
       .expect(204) /* NO CONTENT */
 
     const allBlogsAtEnd = await api.get('/api/blogs')
     const titles = allBlogsAtEnd.body.map(blog => blog.title)
 
     assert(!titles.includes(blogToDelete.title))
-    assert.strictEqual(allBlogsAtEnd.body.length, listHelper.listWithSeveralBlogs.length - 1)
+    assert.strictEqual(allBlogsAtEnd.body.length, listHelper.listWithOneBlog.length - 1)
 
   })
 })
@@ -328,31 +443,22 @@ describe.only('4.16: blogilistan laajennus, step4:', () => {
 
 })
 
-describe.only('4.17: blogilistan laajennus, step4:', () => {
-  beforeEach(async () => {
-    await User.deleteMany({})
+describe.only('4.23: blogilistan laajennus, step11:', () => {
+  test.only('Adding a blog is not possible if token is missing', async () => {
+    const newBlog = {
+      title: 'Jobs That Make a Lot of Money (17 high-paying careers in 2024)',
+      author: 'Ramit Sethi',
+      url: 'https://www.iwillteachyoutoberich.com/jobs-that-make-a-lot-of-money/',
+      likes: 1
+    }
 
-    /* create two users */
-    let passwordHash = await bcrypt.hash('sekret', 10)
-    let user = new User({
-      username: 'root',
-      name: 'Superuser',
-      passwordHash
-    })
-
-    await user.save()
-
-    passwordHash = await bcrypt.hash('salasana', 10)
-    user = new User({
-      username: 'tteekkari',
-      name: 'Teemu Teekkari',
-      passwordHash
-    })
-
-    await user.save()
+    await api
+      .post('/api/blogs')
+      /* .set('Authorization', authToken) */
+      .send(newBlog)
+      .expect(401) /* UNAUTHORIZED */
+      .expect('Content-Type', /application\/json/)
   })
-
-
 })
 
 after(async () => {
