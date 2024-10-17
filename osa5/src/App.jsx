@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -8,10 +9,13 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+    blogService.getAll().then(initialBlogs =>
+      setBlogs( initialBlogs )
     )  
   }, [])
 
@@ -20,6 +24,7 @@ const App = () => {
     if(loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
       console.log('logged in as', user.username)
     }
   }, [])
@@ -31,6 +36,7 @@ const App = () => {
       const user = await loginService.login({username, password})
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
 
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -43,6 +49,28 @@ const App = () => {
     console.log('logging out user:', user.username)
     window.localStorage.removeItem('loggedBloglistUser')
     setUser(null)
+  }
+
+  /* Clean the blog states */
+  const cleanBlog = () => {
+    setNewTitle('')
+    setNewAuthor('')
+    setNewUrl('')
+  }
+
+  const addBlog = async (event) => {
+    event.preventDefault()
+    
+    const newBlog = {
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl,
+    }
+    const returnedBlog = await blogService
+      .create(newBlog)
+    setBlogs(blogs.concat(returnedBlog))
+   
+    cleanBlog()
   }
   
   let blogsToShow = []
@@ -79,11 +107,11 @@ const App = () => {
     )
   } 
 
+  
   /* blogs read and user logged in */
-  if (blogsToShow != null) {
-    return (
-      <div>
-        <h2>blogs</h2>
+  return (
+    <div>
+      <h2>blogs</h2>
         <p>
           {user.name} logged in
         
@@ -91,11 +119,25 @@ const App = () => {
             logout
           </button>
         </p>
-        
+      <div>
+        <h2>create new</h2>
+        <BlogForm
+          addBlog={addBlog}
+          newTitle={newTitle}
+          newAuthor={newAuthor}
+          newUrl={newUrl}
+          setNewTitle={setNewTitle}
+          setNewAuthor={setNewAuthor}
+          setNewUrl={setNewUrl}
+        />
+      </div>
+    {blogsToShow &&
+      <div>
         {blogsToShow.map(blog => <Blog key={blog.id} blog={blog} />)}
       </div>
-    )
-  }
+    }
+    </div>
+  )
 }
 
 export default App
