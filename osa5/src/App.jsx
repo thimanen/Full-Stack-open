@@ -1,8 +1,12 @@
+import './index.css'
 import { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import BlogView from './components/BlogView'
 import BlogForm from './components/BlogForm'
+import LoginView from './components/LoginView'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,6 +16,7 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
+  const [notification, setNotification] = useState({ body: null, type: null })
 
   useEffect(() => {
     blogService.getAll().then(initialBlogs =>
@@ -29,26 +34,30 @@ const App = () => {
     }
   }, [])
 
+  const sendNotification = (body, notifType) => {
+    setNotification({body: body, type: notifType})
+
+    setTimeout(() => {
+      setNotification({body: null, type: null})
+    }, 3000)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     console.log('logging in with', username, password)
     try {
-      const user = await loginService.login({username, password})
-      window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
+      const newUser = await loginService.login({username, password})
+      window.localStorage.setItem('loggedBloglistUser', JSON.stringify(newUser))
 
-      blogService.setToken(user.token)
-      setUser(user)
+      blogService.setToken(newUser.token)
+      setUser(newUser)
+      sendNotification(`${newUser.name} succesfully logged in`, 'info')
       setUsername('')
       setPassword('')
     } catch (exception) {
       console.log('wrong credentials')
+      sendNotification('wrong username or password', 'error')
     }
-  }
-
-  const handleLogout = () => {
-    console.log('logging out user:', user.username)
-    window.localStorage.removeItem('loggedBloglistUser')
-    setUser(null)
   }
 
   /* Clean the blog states */
@@ -69,74 +78,55 @@ const App = () => {
     const returnedBlog = await blogService
       .create(newBlog)
     setBlogs(blogs.concat(returnedBlog))
+    sendNotification(`a new blog: ${returnedBlog.name} by ${returnedBlog.author} added`, 'info')
    
     cleanBlog()
   }
   
-  let blogsToShow = []
-  if (blogs.length && user) {
-    blogsToShow = blogs.filter(blog => blog.user.username === user.username)
-  }
-
-  if (user === null) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <form onSubmit={handleLogin}>
-          <div>
-            username 
-            <input
-              type="text"
-              value={username}
-              name="username"
-              onChange={({target}) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password 
-            <input
-              type="password"
-              value={password}
-              name="password"
-              onChange={({target}) => setPassword(target.value)}
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
-      </div>
-    )
-  } 
-
-  
-  /* blogs read and user logged in */
   return (
-    <div>
-      <h2>blogs</h2>
-        <p>
-          {user.name} logged in
-        
-          <button onClick={handleLogout}>
-            logout
-          </button>
-        </p>
+  <div>
+    <Notification notification={notification} />
+
+    { !user &&
+      <LoginForm
+        handlelogin={handleLogin}
+        username={username}
+        setUsername={setUsername}
+        password={password}
+        setPassword={setPassword} />
+    }
+
+    { user &&
       <div>
-        <h2>create new</h2>
-        <BlogForm
-          addBlog={addBlog}
-          newTitle={newTitle}
-          newAuthor={newAuthor}
-          newUrl={newUrl}
-          setNewTitle={setNewTitle}
-          setNewAuthor={setNewAuthor}
-          setNewUrl={setNewUrl}
-        />
-      </div>
-    {blogsToShow &&
-      <div>
-        {blogsToShow.map(blog => <Blog key={blog.id} blog={blog} />)}
+        <h2>blogs</h2>
+      
+        <div>
+          <LoginView
+            user={user}
+            setUser={setUser} />
+        </div>
+
+        <div>
+          <h2>create new</h2>
+          <BlogForm
+            addBlog={addBlog}
+            newTitle={newTitle}
+            newAuthor={newAuthor}
+            newUrl={newUrl}
+            setNewTitle={setNewTitle}
+            setNewAuthor={setNewAuthor}
+            setNewUrl={setNewUrl} />
+        </div>
+
+        <div>
+          <h2>blogs added by user {user.name}</h2>
+          <BlogView
+            blogs={blogs}
+            user={user} />
+        </div>
       </div>
     }
-    </div>
+  </div>
   )
 }
 
