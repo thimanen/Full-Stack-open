@@ -1,5 +1,5 @@
 import './index.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import BlogView from './components/BlogView'
 import BlogForm from './components/BlogForm'
 import LoginView from './components/LoginView'
@@ -7,16 +7,15 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
   const [notification, setNotification] = useState({ body: null, type: null })
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(initialBlogs =>
@@ -59,28 +58,12 @@ const App = () => {
       sendNotification('wrong username or password', 'error')
     }
   }
-
-  /* Clean the blog states */
-  const cleanBlog = () => {
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
-  }
-
-  const addBlog = async (event) => {
-    event.preventDefault()
-    
-    const newBlog = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-    }
+  const addBlog = async (blogObject) => {
+    blogFormRef.current.toggleVisibility()
     const returnedBlog = await blogService
-      .create(newBlog)
+      .create(blogObject)
     setBlogs(blogs.concat(returnedBlog))
-    sendNotification(`a new blog: ${returnedBlog.name} by ${returnedBlog.author} added`, 'info')
-   
-    cleanBlog()
+    sendNotification(`a new blog: ${returnedBlog.title} by ${returnedBlog.author} added`, 'info')
   }
   
   return (
@@ -98,7 +81,7 @@ const App = () => {
 
     { user &&
       <div>
-        <h2>blogs</h2>
+        <h2>BLOGS</h2>
       
         <div>
           <LoginView
@@ -107,19 +90,15 @@ const App = () => {
         </div>
 
         <div>
-          <h2>create new</h2>
-          <BlogForm
-            addBlog={addBlog}
-            newTitle={newTitle}
-            newAuthor={newAuthor}
-            newUrl={newUrl}
-            setNewTitle={setNewTitle}
-            setNewAuthor={setNewAuthor}
-            setNewUrl={setNewUrl} />
+          <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+            <BlogForm
+              createBlog={addBlog}
+            />
+          </Togglable>
         </div>
 
         <div>
-          <h2>blogs added by user {user.name}</h2>
+          <h3>blogs added by user {user.name}</h3>
           <BlogView
             blogs={blogs}
             user={user} />
