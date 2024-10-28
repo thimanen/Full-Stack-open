@@ -60,8 +60,19 @@ const App = () => {
   }
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
+    
     const returnedBlog = await blogService
       .create(blogObject)
+
+    /* Create a proper user-object in the blog */
+    let temp = {}
+    temp.id = returnedBlog.user
+    temp.username = user.username
+    temp.name = user.name
+    
+    delete returnedBlog.user
+    returnedBlog.user = temp
+
     setBlogs(blogs.concat(returnedBlog))
     sendNotification(`a new blog: ${returnedBlog.title} by ${returnedBlog.author} added`, 'info')
   }
