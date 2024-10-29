@@ -94,6 +94,17 @@ const App = () => {
     
     /*sendNotification(`likes increased for: ${blogObject.title} by ${blogObject.author}`, 'info')*/
   }
+
+  const deleteBlog = async (blogObject) => {
+    if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)) {
+      await blogService
+        .remove(blogObject)
+    
+      const newBlogList = blogs.filter(blog => blog.id !== blogObject.id)
+      setBlogs(newBlogList)
+      sendNotification(`blog ${blogObject.title} by ${blogObject.author} was removed`, 'info')
+    }
+  }
   
   return (
   <div>
@@ -131,7 +142,8 @@ const App = () => {
           <BlogView
             blogs={blogs}
             user={user}
-            updateBlog={updateBlog} />
+            updateBlog={updateBlog}
+            deleteBlog={deleteBlog} />
         </div>
       </div>
     }
