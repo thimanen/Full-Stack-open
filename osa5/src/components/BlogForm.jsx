@@ -7,6 +7,7 @@ const BlogForm = ({ createBlog }) => {
 
   const addBlog = (event) => {
     event.preventDefault()
+    console.log('here I am')
     
     const newBlog = {
       title: newTitle,

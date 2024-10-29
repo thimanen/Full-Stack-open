@@ -76,6 +76,24 @@ const App = () => {
     setBlogs(blogs.concat(returnedBlog))
     sendNotification(`a new blog: ${returnedBlog.title} by ${returnedBlog.author} added`, 'info')
   }
+
+  const updateBlog = async (blogObject) => {
+    await blogService
+      .update(blogObject)
+
+    /* Create a proper user-object in the blog */
+    let temp = {}
+    temp.id = blogObject.user
+    temp.username = user.username
+    temp.name = user.name
+    
+    delete blogObject.user
+    blogObject.user = temp
+
+    setBlogs(blogs.map(blog => blog.id !== blogObject.id ? blog : blogObject))
+    
+    /*sendNotification(`likes increased for: ${blogObject.title} by ${blogObject.author}`, 'info')*/
+  }
   
   return (
   <div>
@@ -112,7 +130,8 @@ const App = () => {
           <h3>blogs added by user {user.name}</h3>
           <BlogView
             blogs={blogs}
-            user={user} />
+            user={user}
+            updateBlog={updateBlog} />
         </div>
       </div>
     }

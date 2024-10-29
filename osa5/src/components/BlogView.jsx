@@ -1,6 +1,19 @@
 import Blog from './Blog'
 
-const BlogView = ({ blogs, user }) => {
+const BlogView = ({ blogs, user, updateBlog }) => {
+
+  const updateLikes = (originalBlog) => {
+        
+    const newBlog = {
+      title: originalBlog.title,
+      author: originalBlog.author,
+      url: originalBlog.url,
+      id: originalBlog.id,
+      likes: originalBlog.likes + 1,
+      user: originalBlog.user.id
+    }
+    updateBlog(newBlog)
+  }
 
   let blogsToShow = []
   if (blogs.length && user) {
@@ -10,7 +23,7 @@ const BlogView = ({ blogs, user }) => {
       <div>
         {blogsToShow &&
           <div>
-            {blogsToShow.map(blog => <Blog key={blog.id} blog={blog} />)}
+            {blogsToShow.map(blog => <Blog key={blog.id} blog={blog} addLikesByOne={updateLikes} />)}
           </div>
         }
       </div>
