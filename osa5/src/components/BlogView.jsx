@@ -17,6 +17,7 @@ const BlogView = ({ blogs, user, updateBlog }) => {
 
   let blogsToShow = []
   if (blogs.length && user) {
+    blogs.sort((a, b) => b.likes - a.likes)
     blogsToShow = blogs.filter(blog => blog.user.username === user.username)
 
     return(
