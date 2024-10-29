@@ -81,7 +81,7 @@ const App = () => {
     await blogService
       .update(blogObject)
 
-    /* Create a proper user-object in the blog */
+    /* Create a proper user-object in the blog, otherwise blog is not visible until next refresh */
     let temp = {}
     temp.id = blogObject.user
     temp.username = user.username
