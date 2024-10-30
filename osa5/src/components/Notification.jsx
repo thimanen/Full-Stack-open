@@ -1,8 +1,8 @@
-const Notification = ({ notification }) => {  
+const Notification = ({ notification }) => {
   if(!notification.body) {
     return
   }
-  
+
   return (
     <div>
       {notification.type === 'info' &&

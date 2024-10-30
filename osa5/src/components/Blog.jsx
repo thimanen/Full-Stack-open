@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, addLikesByOne, removeBlog }) => {
   const [visible, setVisible] = useState(false)
-  
+
   const label = visible ? 'hide' : 'view'
-  const showWhenVisible = {display: visible ? '' : 'none'}
+  const showWhenVisible = { display: visible ? '' : 'none' }
 
   return (
     <div className="blog">
@@ -21,6 +22,12 @@ const Blog = ({ blog, addLikesByOne, removeBlog }) => {
       </div>
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  addLikesByOne: PropTypes.func.isRequired,
+  removeBlog: PropTypes.func.isRequired
 }
 
 export default Blog

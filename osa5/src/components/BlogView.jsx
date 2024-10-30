@@ -1,9 +1,10 @@
 import Blog from './Blog'
+import PropTypes from 'prop-types'
 
 const BlogView = ({ blogs, user, updateBlog, deleteBlog }) => {
 
   const updateLikes = (originalBlog) => {
-        
+
     const newBlog = {
       title: originalBlog.title,
       author: originalBlog.author,
@@ -32,6 +33,14 @@ const BlogView = ({ blogs, user, updateBlog, deleteBlog }) => {
   }
 
   return null
+}
+
+/* blogs, user, updateBlog, deleteBlog */
+BlogView.propTypes = {
+  blogs: PropTypes.array.isRequired,
+  user: PropTypes.object.isRequired,
+  updateBlog: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired
 }
 
 export default BlogView

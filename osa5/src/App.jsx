@@ -20,7 +20,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(initialBlogs =>
       setBlogs( initialBlogs )
-    )  
+    )
   }, [])
 
   useEffect( () => {
@@ -34,10 +34,10 @@ const App = () => {
   }, [])
 
   const sendNotification = (body, notifType) => {
-    setNotification({body: body, type: notifType})
+    setNotification({ body: body, type: notifType })
 
     setTimeout(() => {
-      setNotification({body: null, type: null})
+      setNotification({ body: null, type: null })
     }, 3000)
   }
 
@@ -45,7 +45,7 @@ const App = () => {
     event.preventDefault()
     console.log('logging in with', username, password)
     try {
-      const newUser = await loginService.login({username, password})
+      const newUser = await loginService.login({ username, password })
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(newUser))
 
       blogService.setToken(newUser.token)
@@ -60,7 +60,7 @@ const App = () => {
   }
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    
+
     const returnedBlog = await blogService
       .create(blogObject)
 
@@ -69,7 +69,7 @@ const App = () => {
     temp.id = returnedBlog.user
     temp.username = user.username
     temp.name = user.name
-    
+
     delete returnedBlog.user
     returnedBlog.user = temp
 
@@ -86,12 +86,12 @@ const App = () => {
     temp.id = blogObject.user
     temp.username = user.username
     temp.name = user.name
-    
+
     delete blogObject.user
     blogObject.user = temp
 
     setBlogs(blogs.map(blog => blog.id !== blogObject.id ? blog : blogObject))
-    
+
     /*sendNotification(`likes increased for: ${blogObject.title} by ${blogObject.author}`, 'info')*/
   }
 
@@ -99,30 +99,30 @@ const App = () => {
     if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)) {
       await blogService
         .remove(blogObject)
-    
+
       const newBlogList = blogs.filter(blog => blog.id !== blogObject.id)
       setBlogs(newBlogList)
       sendNotification(`blog ${blogObject.title} by ${blogObject.author} was removed`, 'info')
     }
   }
-  
-  return (
-  <div>
-    <Notification notification={notification} />
 
-    { !user &&
+  return (
+    <div>
+      <Notification notification={notification} />
+
+      { !user &&
       <LoginForm
         handlelogin={handleLogin}
         username={username}
         setUsername={setUsername}
         password={password}
         setPassword={setPassword} />
-    }
+      }
 
-    { user &&
+      { user &&
       <div>
         <h2>BLOGS</h2>
-      
+
         <div>
           <LoginView
             user={user}
@@ -146,8 +146,8 @@ const App = () => {
             deleteBlog={deleteBlog} />
         </div>
       </div>
-    }
-  </div>
+      }
+    </div>
   )
 }
 

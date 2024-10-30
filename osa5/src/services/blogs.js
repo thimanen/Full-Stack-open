@@ -23,7 +23,7 @@ const create = async (newBlog) => {
 
 const update = async (updateBlog) => {
   const blogUrl = `${baseUrl}/${updateBlog.id}`
-  
+
   const config = {
     headers: { Authorization: token },
   }
