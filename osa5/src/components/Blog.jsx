@@ -11,7 +11,7 @@ const Blog = ({ blog, addLikesByOne, removeBlog }) => {
     <div className="blog">
       {blog.title} {blog.author}
       <button onClick={() => setVisible(!visible)}>{label}</button>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className="togglableContent">
         <div>{blog.url}</div>
         <div>
           likes: {blog.likes}
