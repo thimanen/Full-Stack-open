@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 describe('5.13: blogilistan testit, step1', () => {
-  
+
   const likesMockHandler = vi.fn()
   const removeMockHandler = vi.fn()
- 
+
   const blog = {
     title: 'this is test title',
     author: 'Test Author',
@@ -53,11 +53,11 @@ describe('5.14: blogilistan testit, step2', () => {
       name: 'Test Name',
     },
   }
-  
+
   test('url, likes and user are shown if button is pressed', async () => {
-    const container = render(<Blog 
-      blog={blog} 
-      addLikesByOne={likesMockHandler} 
+    const container = render(<Blog
+      blog={blog}
+      addLikesByOne={likesMockHandler}
       removeBlog={removeMockHandler} />).container
 
     const user = userEvent.setup()
@@ -84,9 +84,9 @@ describe('5.15:; blogilistan testit, step3', () => {
   }
 
   test('like-button is pressed twice', async () => {
-    const container = render(<Blog 
-      blog={blog} 
-      addLikesByOne={likesMockHandler} 
+    const container = render(<Blog
+      blog={blog}
+      addLikesByOne={likesMockHandler}
       removeBlog={removeMockHandler} />).container
 
     const view_user = userEvent.setup()

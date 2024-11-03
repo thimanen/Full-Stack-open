@@ -8,7 +8,6 @@ const BlogForm = ({ createBlog }) => {
 
   const addBlog = (event) => {
     event.preventDefault()
-    console.log('here I am')
 
     const newBlog = {
       title: newTitle,
@@ -23,19 +22,31 @@ const BlogForm = ({ createBlog }) => {
 
   return (
     <div>
-      <h3>create new blog</h3>
+      <h3>Create new blog</h3>
       <form onSubmit={addBlog}>
         <div>
           title:
-          <input value={newTitle} onChange={({ target }) => setNewTitle(target.value)} />
+          <input
+            value={newTitle}
+            onChange={({ target }) => setNewTitle(target.value)}
+            placeholder='write title here'
+          />
         </div>
         <div>
           author:
-          <input value={newAuthor} onChange={({ target }) => setNewAuthor(target.value)} />
+          <input
+            value={newAuthor}
+            onChange={({ target }) => setNewAuthor(target.value)}
+            placeholder='write author here'
+          />
         </div>
         <div>
           url:
-          <input value={newUrl} onChange={({ target }) => setNewUrl(target.value)} />
+          <input
+            value={newUrl}
+            onChange={({ target }) => setNewUrl(target.value)}
+            placeholder='write url here'
+          />
         </div>
         <div>
           <button type="submit">create</button>
