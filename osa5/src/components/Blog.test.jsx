@@ -44,7 +44,6 @@ describe('5.14: blogilistan testit, step2', () => {
   const likesMockHandler = vi.fn()
   const removeMockHandler = vi.fn()
 
-  
   const blog = {
     title: 'this is test title',
     author: 'Test Author',
@@ -67,6 +66,39 @@ describe('5.14: blogilistan testit, step2', () => {
 
     const div = container.querySelector('.togglableContent')
     expect(div).not.toHaveStyle('display: none')
+  })
+})
+
+describe('5.15:; blogilistan testit, step3', () => {
+  const likesMockHandler = vi.fn()
+  const removeMockHandler = vi.fn()
+
+  const blog = {
+    title: 'this is test title',
+    author: 'Test Author',
+    url: 'test_url',
+    likes: 0,
+    user: {
+      name: 'Test Name',
+    },
+  }
+
+  test('like-button is pressed twice', async () => {
+    const container = render(<Blog 
+      blog={blog} 
+      addLikesByOne={likesMockHandler} 
+      removeBlog={removeMockHandler} />).container
+
+    const view_user = userEvent.setup()
+    const button = screen.getByText(/view/)
+    await view_user.click(button)
+
+    const likes_user = userEvent.setup()
+    const likes_button = screen.getByText(/like\b/)
+    await likes_user.click(likes_button)
+    await likes_user.click(likes_button)
+
+    expect(likesMockHandler.mock.calls).toHaveLength(2)
   })
 })
 
