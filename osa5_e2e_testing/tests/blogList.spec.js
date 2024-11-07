@@ -54,6 +54,14 @@ describe('BlogList', () => {
         await page.getByRole('button', {name: 'like'}).click()
         await expect(page.getByText('likes: 1')).toBeVisible()
       })
+
+      test('it can be removed by creator', async ({page}) => {
+        await expect(page.getByText('first blog first author')).toBeVisible()
+        await page.getByRole('button', {name: 'view'}).click()
+        page.on('dialog', dialog => dialog.accept())
+        await page.getByRole('button', {name: 'remove'}).click()
+        await expect(page.getByText('first blog first author')).not.toBeVisible()
+      })
     })
   })
 })
