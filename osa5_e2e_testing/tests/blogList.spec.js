@@ -11,6 +11,13 @@ describe('BlogList', () => {
         password: 'salainen salasana'
       }
     })
+    await request.post('http://localhost:3003/api/users', {
+      data: {
+        name: 'Teemu Teekkari',
+        username: 'tteekkari',
+        password: 'salasana'
+      }
+    })
 
     await page.goto('http://localhost:3000')
   })
@@ -63,6 +70,18 @@ describe('BlogList', () => {
         await expect(page.getByText('first blog first author')).not.toBeVisible()
       })
     })
+  })
+
+  describe('Login with one user', () => {
+    test('and create a blog', async ({page}) => {
+      await loginWith(page, 'thimanen', 'salainen salasana')
+      await createBlog(page, 'first blog', 'first author', 'first url')   
+    })
+   
+    test('and login with another user', async ({page}) => {
+      await loginWith(page, 'tteekkari', 'salasana')
+    })
+
   })
 })
 
