@@ -1,0 +1,16 @@
+{
+  "name": "osa5_e2e_testing",
+  "version": "0.0.1",
+  "description": "e2e tests for osa5",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  "author": "Teemu Himanen",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.48.2",
+    "@types/node": "^22.9.0"
+  }
+}

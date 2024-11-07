@@ -2,11 +2,11 @@ import { useState, useEffect, useRef } from 'react'
 import Note from './components/Note'
 import Notification from './components/Notification'
 import Footer from './components/Footer'
+import Togglable from './components/Togglable'
+import LoginForm from './components/LoginForm'
+import NoteForm from './components/NoteForm'
 import noteService from './services/notes'
 import loginService from './services/login'
-import LoginForm from './components/LoginForm'
-import Togglable from './components/Togglable'
-import NoteForm from './components/NoteForm'
 
 const App = () => {
   const [notes, setNotes] = useState([])
@@ -17,7 +17,13 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [loginVisible, setLoginVisible] = useState(false)
 
-  const noteFormRef = useRef()
+  useEffect(() => {
+    noteService
+      .getAll()
+      .then(initialNotes => {
+        setNotes(initialNotes)
+      })
+  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
@@ -28,13 +34,7 @@ const App = () => {
     }
   }, [])
 
-  useEffect(() => {
-    noteService
-      .getAll()
-      .then(initialNotes => {
-        setNotes(initialNotes)
-      })
-  }, [])
+  const noteFormRef = useRef()
 
   const toggleImportanceOf = id => {
     const note = notes.find(n => n.id === id)
@@ -55,13 +55,22 @@ const App = () => {
       })
   }
 
+  const addNote = (noteObject) => {
+    noteFormRef.current.toggleVisibility()
+    noteService
+      .create(noteObject)
+      .then(returnedNote => {
+        setNotes(notes.concat(returnedNote))
+      })
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
-
     try {
       const user = await loginService.login({
         username, password,
       })
+
       window.localStorage.setItem(
         'loggedNoteappUser', JSON.stringify(user)
       )
@@ -76,19 +85,6 @@ const App = () => {
       }, 5000)
     }
   }
-
-  const addNote = (noteObject) => {
-    noteFormRef.current.toggleVisibility()
-    noteService
-      .create(noteObject)
-      .then(returnedNote => {
-        setNotes(notes.concat(returnedNote))
-      })
-  }
-
-  const notesToShow = showAll
-    ? notes
-    : notes.filter(note => note.important)
 
   const loginForm = () => {
     const hideWhenVisible = { display: loginVisible ? 'none' : '' }
@@ -113,19 +109,26 @@ const App = () => {
     )
   }
 
+  const noteForm = () => (
+    <Togglable buttonLabel="new note" ref={noteFormRef} >
+      <NoteForm createNote={addNote} />
+    </Togglable>
+  )
+
+  const notesToShow = showAll
+    ? notes
+    : notes.filter(note => note.important)
+
   return (
     <div>
       <h1>Notes</h1>
+
       <Notification message={errorMessage} />
 
       {!user && loginForm()}
       {user && <div>
         <p>{user.name} logged in</p>
-        <Togglable buttonLabel='new note' ref={noteFormRef}>
-          <NoteForm
-            createNote={addNote}
-          />
-        </Togglable>
+        {noteForm()}
       </div>
       }
 
@@ -143,6 +146,7 @@ const App = () => {
           />
         )}
       </ul>
+
       <Footer />
     </div>
   )
