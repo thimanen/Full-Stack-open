@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith } = require('./helper')
+const { loginWith, createBlog } = require('./helper')
 
 describe('BlogList', () => {
   beforeEach(async ({page, request}) => {
@@ -39,14 +39,21 @@ describe('BlogList', () => {
     })
 
     test('a new blog can be created', async ({page}) => {
-      await page.getByRole('button', {name: 'create new blog'}).click()
-      
-      await page.getByTestId('title').fill('first blog')
-      await page.getByTestId('author').fill('first author')
-      await page.getByTestId('url').fill('first url')
-      await page.getByRole('button', {name: 'create'}).click()
-
+      await createBlog(page, 'first blog', 'first author', 'first url')
       await expect(page.getByText('first blog first author')).toBeVisible()
+    })
+
+    describe('and a blog exists', () => {
+      beforeEach(async ({page}) => {
+        await createBlog(page, 'first blog', 'first author', 'first url')
+      })
+
+      test('it can be liked', async( {page}) => {
+        await page.getByRole('button', {name: 'view'}).click()
+        await expect(page.getByText('likes: 0')).toBeVisible()
+        await page.getByRole('button', {name: 'like'}).click()
+        await expect(page.getByText('likes: 1')).toBeVisible()
+      })
     })
   })
 })
