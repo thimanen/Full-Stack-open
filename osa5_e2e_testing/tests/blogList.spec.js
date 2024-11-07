@@ -73,15 +73,16 @@ describe('BlogList', () => {
   })
 
   describe('Login with one user', () => {
-    test('and create a blog', async ({page}) => {
+    test('and create a blog. Login with another user and do not see remove button', async ({page}) => {
       await loginWith(page, 'thimanen', 'salainen salasana')
-      await createBlog(page, 'first blog', 'first author', 'first url')   
-    })
-   
-    test('and login with another user', async ({page}) => {
+      await createBlog(page, 'first blog', 'first author', 'first url')
+      await page.getByRole('button', {name: 'logout'}).click()
       await loginWith(page, 'tteekkari', 'salasana')
-    })
+      await expect(page.getByText('first blog first author')).toBeVisible()
+      await page.getByRole('button', {name: 'view'}).click()
+      await expect(page.getByRole('button', {name: 'remove'})).toBeHidden()
 
+    })
   })
 })
 
