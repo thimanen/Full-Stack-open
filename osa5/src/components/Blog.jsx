@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const Blog = ({ blog, addLikesByOne, removeBlog }) => {
+const Blog = ({ blog, addLikesByOne, removeBlog, currentUser }) => {
   const [visible, setVisible] = useState(false)
 
   const label = visible ? 'hide' : 'view'
   const showWhenVisible = { display: visible ? '' : 'none' }
+  const isOwner = blog.user.username === currentUser.username
+  const showIfOwner = { display: isOwner ? '' : 'none' }
 
   return (
     <div className="blog">
@@ -18,7 +20,7 @@ const Blog = ({ blog, addLikesByOne, removeBlog }) => {
           <button onClick={() => addLikesByOne(blog)}>like</button>
         </div>
         <div>{blog.user.name}</div>
-        <button className='button' onClick={() => removeBlog(blog)}>remove</button>
+        <span style={showIfOwner}><button className='button' onClick={() => removeBlog(blog)}>remove</button></span>
       </div>
     </div>
   )

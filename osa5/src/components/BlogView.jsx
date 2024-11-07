@@ -19,13 +19,14 @@ const BlogView = ({ blogs, user, updateBlog, deleteBlog }) => {
   let blogsToShow = []
   if (blogs.length && user) {
     blogs.sort((a, b) => b.likes - a.likes)
-    blogsToShow = blogs.filter(blog => blog.user.username === user.username)
+    /* blogsToShow = blogs.filter(blog => blog.user.username === user.username) */
+    blogsToShow = blogs
 
     return(
       <div>
         {blogsToShow &&
           <div>
-            {blogsToShow.map(blog => <Blog key={blog.id} blog={blog} addLikesByOne={updateLikes} removeBlog={deleteBlog} />)}
+            {blogsToShow.map(blog => <Blog key={blog.id} blog={blog} addLikesByOne={updateLikes} removeBlog={deleteBlog} currentUser={user} />)}
           </div>
         }
       </div>

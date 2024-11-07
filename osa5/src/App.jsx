@@ -138,7 +138,7 @@ const App = () => {
         </div>
 
         <div>
-          <h3>blogs added by user {user.name}</h3>
+          <h3>available blogs</h3>
           <BlogView
             blogs={blogs}
             user={user}
