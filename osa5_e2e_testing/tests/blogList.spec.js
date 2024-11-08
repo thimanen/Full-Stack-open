@@ -4,6 +4,7 @@ const { loginWith, createBlog } = require('./helper')
 describe('BlogList', () => {
   beforeEach(async ({page, request}) => {
     await request.post('http://localhost:3003/api/testing/reset')
+    
     await request.post('http://localhost:3003/api/users', {
       data: {
         name: 'Teemu Himanen',
@@ -82,6 +83,51 @@ describe('BlogList', () => {
       await page.getByRole('button', {name: 'view'}).click()
       await expect(page.getByRole('button', {name: 'remove'})).toBeHidden()
 
+    })
+  })
+
+  describe('Arrange blogs', () => {
+    test('in the order of most likes', async ({page}) => {
+      await loginWith(page, 'thimanen', 'salainen salasana')
+      await createBlog(page, 'first blog', 'first author', 'first url')
+      await createBlog(page, 'second blog', 'second author', 'second url')
+      await createBlog(page, 'third blog', 'third author', 'third url')
+
+      /* first blog get 1 like */
+      await page.getByText('first blog first author').getByRole('button', {name: 'view'}).click()
+      await page.getByRole('button', {name: 'like'}).click()
+      await expect(page.getByText('likes: 1')).toBeVisible()
+      await page.getByText('first blog first author').getByRole('button', {name: 'hide'}).click()
+
+      /* second blog get 2 likes */
+      await page.getByText('second blog second author').getByRole('button', {name: 'view'}).click()
+      await page.getByRole('button', {name: 'like'}).click()
+      await page.getByRole('button', {name: 'like'}).click()
+      await expect(page.getByText('likes: 2')).toBeVisible()
+      await page.getByText('second blog second author').getByRole('button', {name: 'hide'}).click()
+
+      /* third blog get 3 likes */
+      await page.getByText('third blog third author').getByRole('button', {name: 'view'}).click()
+      await page.getByRole('button', {name: 'like'}).click()
+      await page.getByRole('button', {name: 'like'}).click()
+      await page.getByRole('button', {name: 'like'}).click()
+      await expect(page.getByText('likes: 3')).toBeVisible()
+      await page.getByText('third blog third author').getByRole('button', {name: 'hide'}).click()
+
+      /* now verify the order of the blogs */
+
+      const actualOrderOfBlogElements = 
+      await page.$$eval('.blog', elements => {
+        return elements.map(element => element.textContent.split('view',1))
+      })
+      
+      const expectedOrderOfBlogElements = [
+        ['third blog third author'],
+        ['second blog second author'],
+        ['first blog first author']
+      ]
+
+      expect(actualOrderOfBlogElements).toEqual(expectedOrderOfBlogElements)
     })
   })
 })

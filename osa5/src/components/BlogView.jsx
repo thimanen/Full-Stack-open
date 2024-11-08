@@ -25,7 +25,7 @@ const BlogView = ({ blogs, user, updateBlog, deleteBlog }) => {
     return(
       <div>
         {blogsToShow &&
-          <div>
+          <div className="blogsToView">
             {blogsToShow.map(blog => <Blog key={blog.id} blog={blog} addLikesByOne={updateLikes} removeBlog={deleteBlog} currentUser={user} />)}
           </div>
         }
