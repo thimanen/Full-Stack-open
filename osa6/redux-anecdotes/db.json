@@ -34,6 +34,11 @@
       "id": "3dd6",
       "content": "this is new anecdote",
       "votes": 0
+    },
+    {
+      "id": "4fa3",
+      "content": "this is new anecdote 2",
+      "votes": 0
     }
   ]
 }
