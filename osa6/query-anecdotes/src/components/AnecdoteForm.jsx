@@ -11,6 +11,12 @@ const AnecdoteForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
     },
+    onError: () => {
+      notifDispatch({type: "show", notification: `too short anecdote, must have length 5 or more`})
+    setTimeout(() => {
+      notifDispatch({type: "hide"})
+    }, 2000)
+    },
   })
 
   const [notif, notifDispatch] = useContext(NotifContext)
