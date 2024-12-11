@@ -1,6 +1,11 @@
-const Notification = ({ notification }) => {
+import { useContext } from "react"
+import NotificationContext from "../NotificationContext"
+
+const Notification = () => {
+  const [notification, notificationDispatch] = useContext(NotificationContext)
+  
   if (!notification.body) {
-    return;
+    return
   }
 
   return (
@@ -13,6 +18,6 @@ const Notification = ({ notification }) => {
         <div className="error">{notification.body}</div>
       )}
     </div>
-  );
-};
-export default Notification;
+  )
+}
+export default Notification
