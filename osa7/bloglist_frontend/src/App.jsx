@@ -1,5 +1,6 @@
 import "./index.css"
 import { useState, useEffect, useRef, useContext } from "react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import BlogView from "./components/BlogView"
 import BlogForm from "./components/BlogForm"
 import LoginView from "./components/LoginView"
@@ -11,15 +12,26 @@ import Togglable from "./components/Togglable"
 import NotificationContext from "./NotificationContext"
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  /*const [blogs, setBlogs] = useState([])*/
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
+  const queryClient = useQueryClient()
 
+  /*
   useEffect(() => {
     blogService.getAll().then((initialBlogs) => setBlogs(initialBlogs))
   }, [])
+  */
+
+  /* get all blogs from backend */
+  const result = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+  })
+
+  const blogs = result.data
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBloglistUser")
@@ -34,10 +46,10 @@ const App = () => {
   const [notification, notificationDispatch] = useContext(NotificationContext)
 
   const sendNotification = (body, notifType) => {
-    notificationDispatch({type: notifType, notification: body})
+    notificationDispatch({ type: notifType, notification: body })
 
     setTimeout(() => {
-      notificationDispatch({type: "hide", notification: ''})
+      notificationDispatch({ type: "hide", notification: "" })
     }, 3000)
   }
 
@@ -58,12 +70,24 @@ const App = () => {
       sendNotification("wrong username or password", "error")
     }
   }
+
+  /* create a new blog to backend */
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] })
+    },
+  })
+
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
-
+    
+    /*
     const returnedBlog = await blogService.create(blogObject)
+    */
 
     /* Create a proper user-object in the blog */
+    /*
     let temp = {}
     temp.id = returnedBlog.user
     temp.username = user.username
@@ -73,8 +97,11 @@ const App = () => {
     returnedBlog.user = temp
 
     setBlogs(blogs.concat(returnedBlog))
+    */
+    newBlogMutation.mutate(blogObject)
+
     sendNotification(
-      `a new blog: ${returnedBlog.title} by ${returnedBlog.author} added`,
+      `a new blog: ${blogObject.title} by ${blogObject.author} added`,
       "info",
     )
   }
@@ -127,7 +154,7 @@ const App = () => {
         />
       )}
 
-      {user && (
+      {user && blogs && (
         <div>
           <h2>BLOGS</h2>
 
