@@ -81,23 +81,6 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    
-    /*
-    const returnedBlog = await blogService.create(blogObject)
-    */
-
-    /* Create a proper user-object in the blog */
-    /*
-    let temp = {}
-    temp.id = returnedBlog.user
-    temp.username = user.username
-    temp.name = user.name
-
-    delete returnedBlog.user
-    returnedBlog.user = temp
-
-    setBlogs(blogs.concat(returnedBlog))
-    */
     newBlogMutation.mutate(blogObject)
 
     sendNotification(
@@ -106,33 +89,32 @@ const App = () => {
     )
   }
 
+  /* update a blog in backend */
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] })
+    },
+  })
+
   const updateBlog = async (blogObject) => {
-    await blogService.update(blogObject)
-
-    /* Create a proper user-object in the blog, otherwise blog is not visible until next refresh */
-    let temp = {}
-    temp.id = blogObject.user
-    temp.username = user.username
-    temp.name = user.name
-
-    delete blogObject.user
-    blogObject.user = temp
-
-    setBlogs(
-      blogs.map((blog) => (blog.id !== blogObject.id ? blog : blogObject)),
-    )
-
+    updateBlogMutation.mutate(blogObject)
     /*sendNotification(`likes increased for: ${blogObject.title} by ${blogObject.author}`, 'info')*/
   }
+
+  /* delete blog from backend */
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.remove,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] })
+    },
+  })
 
   const deleteBlog = async (blogObject) => {
     if (
       window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)
     ) {
-      await blogService.remove(blogObject)
-
-      const newBlogList = blogs.filter((blog) => blog.id !== blogObject.id)
-      setBlogs(newBlogList)
+      deleteBlogMutation.mutate(blogObject)
       sendNotification(
         `blog ${blogObject.title} by ${blogObject.author} was removed`,
         "info",
