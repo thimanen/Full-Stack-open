@@ -1,8 +1,13 @@
-const LoginView = ({ user, setUser }) => {
+import { useContext } from "react"
+import UserContext from "../UserContext"
+
+const LoginView = () => {
+  const [user, userDispatch] = useContext(UserContext)
+
   const handleLogout = () => {
-    window.localStorage.removeItem("loggedBloglistUser");
-    setUser(null);
-  };
+    window.localStorage.removeItem("loggedBloglistUser")
+    userDispatch({ type: "logout", user: "" })
+  }
 
   return (
     <div>
@@ -11,7 +16,7 @@ const LoginView = ({ user, setUser }) => {
         <button onClick={handleLogout}>logout</button>
       </p>
     </div>
-  );
-};
+  )
+}
 
-export default LoginView;
+export default LoginView

@@ -10,20 +10,13 @@ import LoginForm from "./components/LoginForm"
 import Notification from "./components/Notification"
 import Togglable from "./components/Togglable"
 import NotificationContext from "./NotificationContext"
+import UserContext from "./UserContext"
 
 const App = () => {
-  /*const [blogs, setBlogs] = useState([])*/
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [user, setUser] = useState(null)
   const blogFormRef = useRef()
   const queryClient = useQueryClient()
-
-  /*
-  useEffect(() => {
-    blogService.getAll().then((initialBlogs) => setBlogs(initialBlogs))
-  }, [])
-  */
 
   /* get all blogs from backend */
   const result = useQuery({
@@ -33,17 +26,18 @@ const App = () => {
 
   const blogs = result.data
 
+  const [user, userDispatch] = useContext(UserContext)
+  const [notification, notificationDispatch] = useContext(NotificationContext)
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBloglistUser")
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      userDispatch({ type: "login", user: user })
       blogService.setToken(user.token)
       console.log("logged in as", user.username)
     }
   }, [])
-
-  const [notification, notificationDispatch] = useContext(NotificationContext)
 
   const sendNotification = (body, notifType) => {
     notificationDispatch({ type: notifType, notification: body })
@@ -61,7 +55,8 @@ const App = () => {
       window.localStorage.setItem("loggedBloglistUser", JSON.stringify(newUser))
 
       blogService.setToken(newUser.token)
-      setUser(newUser)
+      userDispatch({ type: "login", user: newUser })
+
       sendNotification(`${newUser.name} succesfully logged in`, "info")
       setUsername("")
       setPassword("")
@@ -141,7 +136,7 @@ const App = () => {
           <h2>BLOGS</h2>
 
           <div>
-            <LoginView user={user} setUser={setUser} />
+            <LoginView />
           </div>
 
           <div>
