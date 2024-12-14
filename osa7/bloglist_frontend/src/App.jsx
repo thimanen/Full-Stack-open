@@ -1,6 +1,7 @@
 import "./index.css"
 import { useState, useEffect, useRef, useContext } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
 import BlogView from "./components/BlogView"
 import BlogForm from "./components/BlogForm"
 import LoginView from "./components/LoginView"
@@ -11,6 +12,8 @@ import Notification from "./components/Notification"
 import Togglable from "./components/Togglable"
 import NotificationContext from "./NotificationContext"
 import UserContext from "./UserContext"
+import UsersView from "./components/UsersView"
+import userService from "./services/users"
 
 const App = () => {
   const [username, setUsername] = useState("")
@@ -23,8 +26,15 @@ const App = () => {
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
   })
-
   const blogs = result.data
+
+  /* get all users from backend */
+  const resultUsers = useQuery({
+    queryKey: ["users"],
+    queryFn: userService.getAllUsers,
+  })
+  const users = resultUsers.data
+  console.log(users)
 
   const [user, userDispatch] = useContext(UserContext)
   const [notification, notificationDispatch] = useContext(NotificationContext)
@@ -71,6 +81,7 @@ const App = () => {
     mutationFn: blogService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] })
+      queryClient.invalidateQueries({ queryKey: ["users"] })
     },
   })
 
@@ -89,6 +100,7 @@ const App = () => {
     mutationFn: blogService.update,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] })
+      queryClient.invalidateQueries({ queryKey: ["users"] })
     },
   })
 
@@ -102,6 +114,7 @@ const App = () => {
     mutationFn: blogService.remove,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] })
+      queryClient.invalidateQueries({ queryKey: ["users"] })
     },
   })
 
@@ -118,45 +131,59 @@ const App = () => {
   }
 
   return (
-    <div>
-      <Notification />
+    <Router>
+      <div>
+        <Notification />
 
-      {!user && (
-        <LoginForm
-          handlelogin={handleLogin}
-          username={username}
-          setUsername={setUsername}
-          password={password}
-          setPassword={setPassword}
-        />
-      )}
+        {!user && (
+          <LoginForm
+            handlelogin={handleLogin}
+            username={username}
+            setUsername={setUsername}
+            password={password}
+            setPassword={setPassword}
+          />
+        )}
 
-      {user && blogs && (
-        <div>
-          <h2>BLOGS</h2>
-
+        {user && blogs && (
           <div>
-            <LoginView />
-          </div>
+            <h2>BLOGS</h2>
 
-          <div>
-            <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-              <BlogForm createBlog={addBlog} />
-            </Togglable>
-          </div>
+            <div>
+              <LoginView />
+            </div>
+            <Routes>
+              <Route path="/users" element={<UsersView users={users} />} />
+              <Route
+                path="/"
+                element={
+                  <div>
+                    <div>
+                      <Togglable
+                        buttonLabel="create new blog"
+                        ref={blogFormRef}
+                      >
+                        <BlogForm createBlog={addBlog} />
+                      </Togglable>
+                    </div>
 
-          <div>
-            <h3>available blogs</h3>
-            <BlogView
-              blogs={blogs}
-              user={user}
-              updateBlog={updateBlog}
-              deleteBlog={deleteBlog}
-            />
+                    <div>
+                      <h3>available blogs</h3>
+                      <BlogView
+                        blogs={blogs}
+                        user={user}
+                        updateBlog={updateBlog}
+                        deleteBlog={deleteBlog}
+                      />
+                    </div>
+                  </div>
+                }
+              />
+            </Routes>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </Router>
   )
 }
 
