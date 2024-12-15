@@ -14,6 +14,7 @@ import NotificationContext from "./NotificationContext"
 import UserContext from "./UserContext"
 import UsersView from "./components/UsersView"
 import userService from "./services/users"
+import User from "./components/User"
 
 const App = () => {
   const [username, setUsername] = useState("")
@@ -154,6 +155,7 @@ const App = () => {
             </div>
             <Routes>
               <Route path="/users" element={<UsersView users={users} />} />
+              <Route path="/users/:id" element={<User users={users} /> } />
               <Route
                 path="/"
                 element={

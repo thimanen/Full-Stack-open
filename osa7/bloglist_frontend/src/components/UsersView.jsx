@@ -1,10 +1,12 @@
+import { Link } from "react-router-dom"
+
 const UsersView = ({ users }) => {
   if (!users) {
     return
   }
 
   const tableArray = users.map((row) => {
-    return { name: row.name, blogs: row.blogs.length }
+    return { name: row.name, id: row.id, blogs: row.blogs.length }
   })
 
   return (
@@ -20,8 +22,10 @@ const UsersView = ({ users }) => {
         <tbody>
           {tableArray.map((val, key) => {
             return (
-              <tr key={key}>
-                <td>{val.name}</td>
+              <tr key={val.id}>
+                <td>
+                  <Link to={`/users/${val.id}`}>{val.name}</Link>
+                </td>
                 <td>{val.blogs}</td>
               </tr>
             )
