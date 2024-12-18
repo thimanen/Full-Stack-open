@@ -6,6 +6,7 @@ import {
   Routes,
   Route,
   useNavigate,
+  Link,
 } from "react-router-dom"
 import BlogView from "./components/BlogView"
 import BlogForm from "./components/BlogForm"
@@ -139,66 +140,68 @@ const App = () => {
     }
   }
 
+  const padding = {
+    padding: 5,
+  }
+
   return (
-    
-      <div>
-        <Notification />
+    <div>
+      <Notification />
 
-        {!user && (
-          <LoginForm
-            handlelogin={handleLogin}
-            username={username}
-            setUsername={setUsername}
-            password={password}
-            setPassword={setPassword}
-          />
-        )}
+      {!user && (
+        <LoginForm
+          handlelogin={handleLogin}
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}
+        />
+      )}
 
-        {user && blogs && (
-          <div>
-            <h2>BLOGS</h2>
-
-            <div>
-              <LoginView />
-            </div>
-            <Routes>
-              <Route path="/users" element={<UsersView users={users} />} />
-              <Route path="/users/:id" element={<User users={users} />} />
-              <Route
-                path="/"
-                element={
+      {user && blogs && (
+        <div>
+          <h2>BLOGS</h2>
+          <Link style={padding} to="/">
+            blogs
+          </Link>
+          <Link style={padding} to="/users">
+            users
+          </Link>
+          <LoginView />
+          <Routes>
+            <Route path="/users" element={<UsersView users={users} />} />
+            <Route path="/users/:id" element={<User users={users} />} />
+            <Route
+              path="/"
+              element={
+                <div>
                   <div>
-                    <div>
-                      <Togglable
-                        buttonLabel="create new blog"
-                        ref={blogFormRef}
-                      >
-                        <BlogForm createBlog={addBlog} />
-                      </Togglable>
-                    </div>
-
-                    <div>
-                      <h3>available blogs</h3>
-                      <BlogView blogs={blogs} user={user} />
-                    </div>
+                    <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+                      <BlogForm createBlog={addBlog} />
+                    </Togglable>
                   </div>
-                }
-              />
-              <Route
-                path="/blogs/:id"
-                element={
-                  <Blog
-                    blogs={blogs}
-                    updateBlog={updateBlog}
-                    deleteBlog={deleteBlog}
-                  />
-                }
-              />
-            </Routes>
-          </div>
-        )}
-      </div>
-    
+
+                  <div>
+                    <h3>available blogs</h3>
+                    <BlogView blogs={blogs} user={user} />
+                  </div>
+                </div>
+              }
+            />
+            <Route
+              path="/blogs/:id"
+              element={
+                <Blog
+                  blogs={blogs}
+                  updateBlog={updateBlog}
+                  deleteBlog={deleteBlog}
+                />
+              }
+            />
+          </Routes>
+        </div>
+      )}
+    </div>
   )
 }
 
