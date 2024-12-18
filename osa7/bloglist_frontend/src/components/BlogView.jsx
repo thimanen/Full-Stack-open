@@ -1,7 +1,8 @@
-import Blog from "./Blog";
-import PropTypes from "prop-types";
+import Blog from "./Blog"
+import PropTypes from "prop-types"
+import { Link } from "react-router-dom"
 
-const BlogView = ({ blogs, user, updateBlog, deleteBlog }) => {
+const BlogView = ({ blogs, user }) => {
   const updateLikes = (originalBlog) => {
     const newBlog = {
       title: originalBlog.title,
@@ -10,44 +11,50 @@ const BlogView = ({ blogs, user, updateBlog, deleteBlog }) => {
       id: originalBlog.id,
       likes: originalBlog.likes + 1,
       user: originalBlog.user.id,
-    };
-    updateBlog(newBlog);
-  };
+    }
+    updateBlog(newBlog)
+  }
 
-  let blogsToShow = [];
+  let blogsToShow = []
   if (blogs.length && user) {
-    blogs.sort((a, b) => b.likes - a.likes);
+    blogs.sort((a, b) => b.likes - a.likes)
     /* blogsToShow = blogs.filter(blog => blog.user.username === user.username) */
-    blogsToShow = blogs;
+    blogsToShow = blogs
 
     return (
       <div>
         {blogsToShow && (
           <div className="blogsToView">
             {blogsToShow.map((blog) => (
-              <Blog
+              <div className="blog" key={blog.id}>
+                <Link to={`/blogs/${blog.id}`}>
+                  {blog.title} {blog.author}
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return null
+}
+
+/*
+<Blog
                 key={blog.id}
                 blog={blog}
                 addLikesByOne={updateLikes}
                 removeBlog={deleteBlog}
                 currentUser={user}
               />
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  return null;
-};
+*/
 
 /* blogs, user, updateBlog, deleteBlog */
 BlogView.propTypes = {
   blogs: PropTypes.array.isRequired,
   user: PropTypes.object.isRequired,
-  updateBlog: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
-};
+}
 
-export default BlogView;
+export default BlogView

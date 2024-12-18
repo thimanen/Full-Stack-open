@@ -1,39 +1,44 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
+import { useContext } from "react"
+import UserContext from "../UserContext"
+import PropTypes from "prop-types"
+import { useParams } from "react-router-dom"
 
-const Blog = ({ blog, addLikesByOne, removeBlog, currentUser }) => {
-  const [visible, setVisible] = useState(false);
+const Blog = ({ blogs, updateBlog, deleteBlog }) => {
+  if (!blogs) {
+    return null
+  }
+  const [user, userDispatch] = useContext(UserContext)
 
-  const label = visible ? "hide" : "view";
-  const showWhenVisible = { display: visible ? "" : "none" };
-  const isOwner = blog.user.username === currentUser.username;
-  const showIfOwner = { display: isOwner ? "" : "none" };
+  const id = useParams().id
+  const blog = blogs.find((b) => b.id === id)
+
+  const isOwner = blog.user.username === user.username
+  const showIfOwner = { display: isOwner ? "" : "none" }
 
   return (
-    <div className="blog">
-      {blog.title} {blog.author}
-      <button onClick={() => setVisible(!visible)}>{label}</button>
-      <div style={showWhenVisible} className="togglableContent">
-        <div>{blog.url}</div>
-        <div>
-          likes: {blog.likes}
-          <button onClick={() => addLikesByOne(blog)}>like</button>
-        </div>
-        <div>{blog.user.name}</div>
-        <span style={showIfOwner}>
-          <button className="button" onClick={() => removeBlog(blog)}>
-            remove
-          </button>
-        </span>
+    <div>
+      <h2>
+        {blog.title} {blog.author}
+      </h2>
+      <a href={blog.url}>{blog.url} </a>
+      <div>
+        likes: {blog.likes}
+        <button onClick={() => updateBlog(blog)}>like</button>
       </div>
+      <div>added by {blog.user.name}</div>
+      <span style={showIfOwner}>
+        <button className="button" onClick={() => deleteBlog(blog)}>
+          remove
+        </button>
+      </span>
     </div>
-  );
-};
+  )
+}
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  addLikesByOne: PropTypes.func.isRequired,
-  removeBlog: PropTypes.func.isRequired,
-};
+  blogs: PropTypes.array.isRequired,
+  updateBlog: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
+}
 
-export default Blog;
+export default Blog

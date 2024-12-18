@@ -15,6 +15,7 @@ import UserContext from "./UserContext"
 import UsersView from "./components/UsersView"
 import userService from "./services/users"
 import User from "./components/User"
+import Blog from "./components/Blog"
 
 const App = () => {
   const [username, setUsername] = useState("")
@@ -106,7 +107,7 @@ const App = () => {
   })
 
   const updateBlog = async (blogObject) => {
-    updateBlogMutation.mutate(blogObject)
+    updateBlogMutation.mutate({...blogObject, likes: blogObject.likes + 1})
     /*sendNotification(`likes increased for: ${blogObject.title} by ${blogObject.author}`, 'info')*/
   }
 
@@ -155,7 +156,7 @@ const App = () => {
             </div>
             <Routes>
               <Route path="/users" element={<UsersView users={users} />} />
-              <Route path="/users/:id" element={<User users={users} /> } />
+              <Route path="/users/:id" element={<User users={users} />} />
               <Route
                 path="/"
                 element={
@@ -171,14 +172,19 @@ const App = () => {
 
                     <div>
                       <h3>available blogs</h3>
-                      <BlogView
-                        blogs={blogs}
-                        user={user}
-                        updateBlog={updateBlog}
-                        deleteBlog={deleteBlog}
-                      />
+                      <BlogView blogs={blogs} user={user} />
                     </div>
                   </div>
+                }
+              />
+              <Route
+                path="/blogs/:id"
+                element={
+                  <Blog
+                    blogs={blogs}
+                    updateBlog={updateBlog}
+                    deleteBlog={deleteBlog}
+                  />
                 }
               />
             </Routes>
