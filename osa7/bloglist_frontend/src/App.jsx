@@ -1,7 +1,12 @@
 import "./index.css"
 import { useState, useEffect, useRef, useContext } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom"
 import BlogView from "./components/BlogView"
 import BlogForm from "./components/BlogForm"
 import LoginView from "./components/LoginView"
@@ -22,6 +27,7 @@ const App = () => {
   const [password, setPassword] = useState("")
   const blogFormRef = useRef()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   /* get all blogs from backend */
   const result = useQuery({
@@ -107,7 +113,7 @@ const App = () => {
   })
 
   const updateBlog = async (blogObject) => {
-    updateBlogMutation.mutate({...blogObject, likes: blogObject.likes + 1})
+    updateBlogMutation.mutate({ ...blogObject, likes: blogObject.likes + 1 })
     /*sendNotification(`likes increased for: ${blogObject.title} by ${blogObject.author}`, 'info')*/
   }
 
@@ -125,6 +131,7 @@ const App = () => {
       window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)
     ) {
       deleteBlogMutation.mutate(blogObject)
+      navigate("/")
       sendNotification(
         `blog ${blogObject.title} by ${blogObject.author} was removed`,
         "info",
@@ -133,7 +140,7 @@ const App = () => {
   }
 
   return (
-    <Router>
+    
       <div>
         <Notification />
 
@@ -191,7 +198,7 @@ const App = () => {
           </div>
         )}
       </div>
-    </Router>
+    
   )
 }
 
