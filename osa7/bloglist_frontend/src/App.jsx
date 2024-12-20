@@ -118,6 +118,22 @@ const App = () => {
     /*sendNotification(`likes increased for: ${blogObject.title} by ${blogObject.author}`, 'info')*/
   }
 
+  /* add comment to blog */
+  const addCommentMutation = useMutation({
+    mutationFn: blogService.addComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] })
+      queryClient.invalidateQueries({ queryKey: ["users"] })
+    },
+  })
+
+  const addComment = async (blogObject, newComment) => {
+    addCommentMutation.mutate({
+      ...blogObject,
+      comments: blogObject.comments.concat(newComment),
+    })
+  }
+
   /* delete blog from backend */
   const deleteBlogMutation = useMutation({
     mutationFn: blogService.remove,
@@ -195,6 +211,7 @@ const App = () => {
                   blogs={blogs}
                   updateBlog={updateBlog}
                   deleteBlog={deleteBlog}
+                  addComment={addComment}
                 />
               }
             />

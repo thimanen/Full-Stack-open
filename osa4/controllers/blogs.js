@@ -10,6 +10,23 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
+blogsRouter.post('/:id/comments', middleware.userExtractor, async (request, response) => {
+  const blogBody = request.body
+
+  const blog = {
+    title: blogBody.title,
+    author: blogBody.author,
+    url: blogBody.url,
+    likes: blogBody.likes,
+    comments: blogBody.comments
+  }
+  console.log('ID of blog (in request):', request.params.id)
+  
+  await Blog.findByIdAndUpdate(request.params.id, blog, {new: true })
+  response.status(201).end()
+
+})
+
 blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const body = request.body
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
@@ -97,20 +114,5 @@ blogsRouter.put('/:id', async (request, response) => {
 
 })
 
-blogsRouter.post('/:id/comments', async (request, response) => {
-  const blogBody = request.body
-
-  const blog = {
-    title: blogBody.title,
-    author: blogBody.author,
-    url: blogBody.url,
-    likes: blogBody.likes,
-    comments: blogBody.comments
-  }
-
-  await Blog.findByIdAndUpdate(request.params.id, blog, {new: true })
-  response.status(201).end()
-
-})
 
 module.exports = blogsRouter
