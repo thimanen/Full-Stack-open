@@ -1,6 +1,7 @@
 import Blog from "./Blog"
 import PropTypes from "prop-types"
 import { Link } from "react-router-dom"
+import { Table } from "react-bootstrap"
 
 const BlogView = ({ blogs, user }) => {
   const updateLikes = (originalBlog) => {
@@ -24,15 +25,19 @@ const BlogView = ({ blogs, user }) => {
     return (
       <div>
         {blogsToShow && (
-          <div className="blogsToView">
-            {blogsToShow.map((blog) => (
-              <div className="blog" key={blog.id}>
-                <Link to={`/blogs/${blog.id}`}>
-                  {blog.title} {blog.author}
-                </Link>
-              </div>
-            ))}
-          </div>
+          <Table striped>
+            <tbody>
+              {blogsToShow.map((blog) => (
+                <tr key={blog.id}>
+                  <td>
+                    <Link to={`/blogs/${blog.id}`}>
+                      {blog.title} {blog.author}
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         )}
       </div>
     )
@@ -41,15 +46,6 @@ const BlogView = ({ blogs, user }) => {
   return null
 }
 
-/*
-<Blog
-                key={blog.id}
-                blog={blog}
-                addLikesByOne={updateLikes}
-                removeBlog={deleteBlog}
-                currentUser={user}
-              />
-*/
 
 /* blogs, user, updateBlog, deleteBlog */
 BlogView.propTypes = {

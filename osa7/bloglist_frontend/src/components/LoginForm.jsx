@@ -1,3 +1,5 @@
+import { Form, Row, Col, Button } from "react-bootstrap"
+
 const LoginForm = ({
   handlelogin,
   username,
@@ -8,31 +10,37 @@ const LoginForm = ({
   return (
     <div>
       <h2>Log in to application</h2>
-      <form onSubmit={handlelogin}>
-        <div>
-          username
-          <input
-            data-testid="username"
-            type="text"
-            value={username}
-            name="username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            data-testid="password"
-            type="password"
-            value={password}
-            name="password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
+      <Form onSubmit={handlelogin}>
+        <Row>
+          <Form.Group as={Col}>
+            username
+            <input
+              className="form-control"
+              data-testid="username"
+              type="text"
+              value={username}
+              name="username"
+              onChange={({ target }) => setUsername(target.value)}
+            />
+          </Form.Group>
+          <Form.Group as={Col}>
+            password
+            <input
+              className="form-control"
+              data-testid="password"
+              type="password"
+              value={password}
+              name="password"
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </Form.Group>
+        </Row>
+        <Button variant="primary" type="submit">
+          login
+        </Button>
+      </Form>
     </div>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm

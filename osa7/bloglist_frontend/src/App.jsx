@@ -22,6 +22,7 @@ import UsersView from "./components/UsersView"
 import userService from "./services/users"
 import User from "./components/User"
 import Blog from "./components/Blog"
+import { Button } from 'react-bootstrap'
 
 const App = () => {
   const [username, setUsername] = useState("")
@@ -161,7 +162,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <Notification />
 
       {!user && (
@@ -176,13 +177,13 @@ const App = () => {
 
       {user && blogs && (
         <div>
-          <h2>BLOGS</h2>
           <Link style={padding} to="/">
             blogs
           </Link>
           <Link style={padding} to="/users">
             users
           </Link>
+          <h2>BLOGS</h2>
           <LoginView />
           <Routes>
             <Route path="/users" element={<UsersView users={users} />} />

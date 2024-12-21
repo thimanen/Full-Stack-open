@@ -1,5 +1,6 @@
 import { useContext } from "react"
 import UserContext from "../UserContext"
+import { Button } from "react-bootstrap"
 
 const LoginView = () => {
   const [user, userDispatch] = useContext(UserContext)
@@ -13,7 +14,9 @@ const LoginView = () => {
     <div>
       <p>
         {user.name} logged in
-        <button onClick={handleLogout}>logout</button>
+        <Button variant="danger" onClick={handleLogout}>
+          logout
+        </Button>
       </p>
     </div>
   )

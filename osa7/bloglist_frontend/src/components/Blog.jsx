@@ -2,6 +2,8 @@ import { useContext } from "react"
 import UserContext from "../UserContext"
 import PropTypes from "prop-types"
 import { useParams } from "react-router-dom"
+import { Button, Form, Table } from "react-bootstrap"
+import { Link } from "react-router-dom"
 
 const Blog = ({ blogs, updateBlog, deleteBlog, addComment }) => {
   if (!blogs) {
@@ -18,7 +20,7 @@ const Blog = ({ blogs, updateBlog, deleteBlog, addComment }) => {
   const onCreate = (event) => {
     event.preventDefault()
     const content = event.target.comment.value
-    event.target.comment.value=''
+    event.target.comment.value = ""
     addComment(blog, content)
   }
 
@@ -27,23 +29,41 @@ const Blog = ({ blogs, updateBlog, deleteBlog, addComment }) => {
       <h2>
         {blog.title} {blog.author}
       </h2>
-      <a href={blog.url}>{blog.url} </a>
-      <div>
-        likes: {blog.likes}
-        <button onClick={() => updateBlog(blog)}>like</button>
-      </div>
-      <div>added by {blog.user.name}</div>
+      <Table>
+        <tbody>
+          <tr>
+            <td>
+              <Link to={blog.url}>{blog.url}</Link>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              likes: {blog.likes}
+              <Button variant="secondary" onClick={() => updateBlog(blog)}>
+                like
+              </Button>
+            </td>
+          </tr>
+          <tr>
+            <td>added by {blog.user.name}</td>
+          </tr>
+        </tbody>
+      </Table>
       <span style={showIfOwner}>
-        <button className="button" onClick={() => deleteBlog(blog)}>
+        <Button variant="danger" onClick={() => deleteBlog(blog)}>
           remove
-        </button>
+        </Button>
       </span>
       <h3>comments</h3>
 
-      <form onSubmit={onCreate}>
-        <input name="comment" />
-        <button type="submit">create comment</button>
-      </form>
+      <Form onSubmit={onCreate}>
+        <Form.Group>
+          <input name="comment" placeholder="write comment here" />
+          <Button variant="primary" type="submit">
+            create comment
+          </Button>
+        </Form.Group>
+      </Form>
 
       <ul>
         {blog.comments.map((comment, key) => {
