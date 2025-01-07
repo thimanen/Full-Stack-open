@@ -3,9 +3,18 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prettier": "prettier . --write",
+    "start": "node index.js"
   },
   "author": "Teemu Himanen",
   "license": "MIT",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "@apollo/server": "^4.11.3",
+    "graphql": "^16.10.0"
+  },
+  "devDependencies": {
+    "prettier": "3.4.2"
+  }
 }
