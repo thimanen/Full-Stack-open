@@ -102,6 +102,7 @@ type Author {
   name: String!
   born: String
   id: ID!
+  bookCount: Int!
 }
 
 type Book {
@@ -116,7 +117,8 @@ type Query {
   authorCount: Int!
   bookCount: Int!
   allBooks: [Book!]!
-  }
+  allAuthors: [Author!]!
+}
 `
 
 const resolvers = {
@@ -124,7 +126,11 @@ const resolvers = {
     authorCount: () => authors.length,
     bookCount: () => books.length,
     allBooks: () => books,
+    allAuthors: () => authors
   },
+  Author: {
+    bookCount: (root) => books.filter(book => book.author === root.name).length
+  }
 }
 
 const server = new ApolloServer({
