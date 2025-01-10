@@ -98,42 +98,40 @@ let books = [
   you can remove the placeholder query once your first one has been implemented 
 */
 
-const typeDefs = `
-type Author {
-  name: String!
-  born: String
-  id: ID!
-  bookCount: Int!
-}
-
-type Book {
-  title: String!
-  published: Int!
-  author: String!
-  id: ID!
-  genres: [String!]!
-}
-
-type Query {
-  authorCount: Int!
-  bookCount: Int!
-  allBooks(author: String, genre: String): [Book!]!
-  allAuthors: [Author!]!
-}
-
-type Mutation {
-  addBook(
-    title: String!
-    author: String!
-    published: Int!
-    genres: [String!]!  
-  ): Book
-
-  editAuthor(
+const gql = String.raw
+const typeDefs = gql`
+  type Author {
     name: String!
-    setBornTo: Int!
-  ): Author
-}
+    born: String
+    id: ID!
+    bookCount: Int!
+  }
+
+  type Book {
+    title: String!
+    published: Int!
+    author: String!
+    id: ID!
+    genres: [String!]!
+  }
+
+  type Query {
+    authorCount: Int!
+    bookCount: Int!
+    allBooks(author: String, genre: String): [Book!]!
+    allAuthors: [Author!]!
+  }
+
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]!
+    ): Book
+
+    editAuthor(name: String!, setBornTo: Int!): Author
+  }
 `
 
 const resolvers = {
