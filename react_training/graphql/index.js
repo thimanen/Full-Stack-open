@@ -29,7 +29,18 @@ let persons = [
 const typeDefs = `
   type Address {
     street: String!
-    city: String!
+    city: String! 
+  }
+
+  enum YesNo {
+    YES
+    NO
+  }
+  
+  type Query {
+    personCount: Int!
+    allPersons(phone: YesNo): [Person!]!
+    findPerson(name: String!): Person
   }
 
   type Person {
@@ -39,14 +50,9 @@ const typeDefs = `
     id: ID!
   }
 
-  anum YesNo {
-    YES
-    NO
-  }
-
   type Query {
     personCount: Int!
-    allPersons(phone: YesNo): [Person!]!
+    allPersons: [Person!]!
     findPerson(name: String!): Person
   }
 
@@ -74,7 +80,7 @@ const resolvers = {
       }
       const byPhone = (person) =>
         args.phone === "YES" ? person.phone : !person.phone
-      return persons.filter(person)
+      return persons.filter(byPhone)
     },
     findPerson: (root, args) => persons.find((p) => p.name === args.name),
   },
@@ -96,7 +102,6 @@ const resolvers = {
           },
         })
       }
-
       const person = { ...args, id: uuid() }
       persons = persons.concat(person)
       return person
