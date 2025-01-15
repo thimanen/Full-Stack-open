@@ -1,5 +1,6 @@
 import { ALL_AUTHORS } from './queries'
 import { useQuery } from '@apollo/client'
+import AuthorForm from './AuthorForm'
 
 const Authors = ({ show }) => {
   const result = useQuery(ALL_AUTHORS, { pollInterval: 2000 })
@@ -33,6 +34,8 @@ const Authors = ({ show }) => {
           ))}
         </tbody>
       </table>
+
+      <AuthorForm />
     </div>
   )
 }
