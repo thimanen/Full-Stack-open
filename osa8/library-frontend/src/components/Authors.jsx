@@ -2,7 +2,7 @@ import { ALL_AUTHORS } from './queries'
 import { useQuery } from '@apollo/client'
 
 const Authors = ({ show }) => {
-  const result = useQuery(ALL_AUTHORS)
+  const result = useQuery(ALL_AUTHORS, { pollInterval: 2000 })
 
   if (!show) {
     return null
