@@ -6,16 +6,21 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prettier": "prettier . --write",
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "Teemu Himanen",
   "license": "MIT",
   "dependencies": {
     "@apollo/server": "^4.11.3",
+    "dotenv": "^16.4.7",
     "graphql": "^16.10.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
     "uuid": "^11.0.4"
   },
   "devDependencies": {
+    "nodemon": "^3.1.9",
     "prettier": "3.4.2"
   }
 }
