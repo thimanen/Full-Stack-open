@@ -27,7 +27,7 @@ const NewBook = ({ show, setPage }) => {
     setAuthor('')
     setGenres([])
     setGenre('')
-    /* set next page to books */
+    /* set next page to books!!! */
     setPage('books')
   }
 
