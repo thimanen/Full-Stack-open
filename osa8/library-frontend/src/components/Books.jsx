@@ -5,7 +5,7 @@ import GenreSelection from './GenreSelection'
 
 const Books = ({ show }) => {
   const result = useQuery(ALL_BOOKS, { pollInterval: 2000 })
-  const [genreToShow, setGenreToShow] = useState('')
+  const [genreToShow, setGenreToShow] = useState('all')
 
   if (!show) {
     return null
@@ -19,7 +19,7 @@ const Books = ({ show }) => {
   const genres = books.map((book) => book.genres)
 
   let booksToShow = []
-  if (!genreToShow) {
+  if (genreToShow === 'all') {
     booksToShow = books
   } else {
     booksToShow = books.filter((book) => book.genres.includes(genreToShow))
@@ -28,6 +28,7 @@ const Books = ({ show }) => {
   return (
     <div>
       <h2>books</h2>
+      in genre <b>{genreToShow}</b>
 
       <table>
         <tbody>
