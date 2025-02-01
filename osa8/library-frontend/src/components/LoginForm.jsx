@@ -19,6 +19,8 @@ const LoginForm = ({ setToken, show, setPage }) => {
       setToken(token)
       setPage('authors')
       localStorage.setItem('library-user-token', token)
+      setUsername('')
+      setPassword('')
     }
   }, [result.data])
 

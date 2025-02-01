@@ -1,8 +1,11 @@
 import { useQuery } from '@apollo/client'
+import { useState } from 'react'
 import { ALL_BOOKS } from './queries'
+import GenreSelection from './GenreSelection'
 
 const Books = ({ show }) => {
   const result = useQuery(ALL_BOOKS, { pollInterval: 2000 })
+  const [genreToShow, setGenreToShow] = useState('')
 
   if (!show) {
     return null
@@ -13,6 +16,14 @@ const Books = ({ show }) => {
   }
 
   const books = result.data.allBooks
+  const genres = books.map((book) => book.genres)
+
+  let booksToShow = []
+  if (!genreToShow) {
+    booksToShow = books
+  } else {
+    booksToShow = books.filter((book) => book.genres.includes(genreToShow))
+  }
 
   return (
     <div>
@@ -25,7 +36,7 @@ const Books = ({ show }) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((a) => (
+          {booksToShow.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
@@ -34,6 +45,10 @@ const Books = ({ show }) => {
           ))}
         </tbody>
       </table>
+
+      <div>
+        <GenreSelection genres={genres} setGenreToShow={setGenreToShow} />
+      </div>
     </div>
   )
 }
