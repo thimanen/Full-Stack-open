@@ -71,7 +71,7 @@ const NewBook = ({ show, setPage }) => {
           </button>
         </div>
         <div>genres: {genres.join(' ')}</div>
-        <button type='submit'>create book</button>
+        <button type='submit'>create new book</button>
       </form>
     </div>
   )
