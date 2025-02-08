@@ -1,6 +1,7 @@
 {
-  "name": "library-backend",
+  "name": "graphql",
   "version": "0.0.1",
+  "description": "GraphQL training",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,7 +11,6 @@
   },
   "author": "Teemu Himanen",
   "license": "MIT",
-  "description": "",
   "dependencies": {
     "@apollo/server": "^4.11.3",
     "@graphql-tools/schema": "^10.0.16",
@@ -22,13 +22,10 @@
     "graphql-ws": "^6.0.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
-    "mongoose-unique-validator": "^4.0.1",
     "uuid": "^11.0.4",
     "ws": "^8.18.0"
   },
   "devDependencies": {
-    "eslint": "^9.19.0",
-    "eslint-config-airbnb": "^19.0.4",
     "nodemon": "^3.1.9",
     "prettier": "3.4.2"
   }
