@@ -28,18 +28,12 @@ const resolvers = {
 
       return filteredBooks
     },
-    allAuthors: async () => Author.find({}),
+    allAuthors: async () => Author.find({}).populate('bookCount'),
     me: (root, args, context) => {
       return context.currentUser
     },
   },
   Author: {
-    bookCount: async (root) => {
-      const books = await Book.find({})
-      return books.filter(
-        (book) => book.author.toString() === root._id.toString(),
-      ).length
-    },
     name: async (root) => {
       const author = await Author.findById(root)
       return author.name
